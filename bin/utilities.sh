@@ -1,6 +1,21 @@
 #
 # This is a set of common utilities
 #
+function process_args()
+{
+
+	while test $# -gt 0 
+	do 
+		echo $1 $2
+		[[ $1 =~ ^-- ]] && { eval `echo $1 | cut -c3- | cut -f2 -d' '`="$2" ; shift 2; continue; }
+	done
+}
+
+function fromlink()
+{
+echo $1 | cut -f3 -d/ | cut -f1 -d.
+}
+
 timefile=./timer.properties
 timestr="time:"
 function settime()
