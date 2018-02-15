@@ -12,14 +12,8 @@
 #
 set -x
 
-[[ `dirname $0 | cut -c1` = '/' ]] && bpath=`dirname $0`/ || bpath=`pwd`/`dirname $0`/
-rpath=$bpath/../
-props=$rpath/properties
-data=$rpath/data
-reports=$rpath/html
 
-
-. $bpath/utilities.sh
+. `dirname $0`/99_utilities.sh
 
 function findTeamBonziLink() {
 	local teamName=$1
@@ -74,8 +68,15 @@ awaylink=http://vsltfc.bonzidev.com/sam/teams/index.php?team=3426140
 hometeam=`fromlink $homelink`
 awayteam=`fromlink $awaylink`
 
+rm $currentgame # this should be the first writes to te file
+echo "export hometeam=$hometeam" >> $currentgame
+echo "export awayteam=$awayteam" >> $currentgame
+
 homeroster=$data/$hometeam.roster
 awayroster=$data/$awayteam.roster
+echo "export homeroster=$data/$hometeam.roster" >> $currentgame
+echo "export awayroster=$data/$awayteam.roster" >> $currentgame
+
 [[ -e "$homeroster" ]] && mv $homeroster $homeroster-`datestamp`
 [[ -e "$awayroster" ]] && mv $awayroster $awayroster-`datestamp`
 

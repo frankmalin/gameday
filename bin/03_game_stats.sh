@@ -21,13 +21,12 @@
 
 ####
 
-. ./utilities.sh
+. `dirname $0`/99_utilities.sh
 
 function usage()
 {
 	# This if the set of function to make the updates
-
-	cat stats.usage
+	cat $props/game_stats.properties  | xargs -i echo {} | tr '@' '\t'
 }
 
 function score()
@@ -142,7 +141,10 @@ do
 			settime 1
 			initscoreboards
 			;;
-		H) # Help
+		E) # Exit
+			break
+			;;
+		[?H]) # Help
 			usage
 			;;
 

@@ -1,6 +1,17 @@
-#
+#+ cat /home/malin/github.com/gameday/bin/.//..//data/vsltfc.roster
+
 # This is a set of common utilities
 #
+[[ `dirname $0 | cut -c1` = '/' ]] && bpath=`dirname $0`/ || bpath=`pwd`/`dirname $0`/
+rpath=$bpath/../
+props=$rpath/properties
+data=$rpath/data
+reports=$rpath/html
+
+currentgame=$data/gameday.properties
+timefile=$data/timer.properties
+
+
 function process_args()
 {
 
@@ -8,15 +19,15 @@ function process_args()
 	do 
 		echo $1 $2
 		[[ $1 =~ ^-- ]] && { eval `echo $1 | cut -c3- | cut -f2 -d' '`="$2" ; shift 2; continue; }
+		echo Unknown parm : $1 ; shift
 	done
 }
 
 function fromlink()
 {
-echo $1 | cut -f3 -d/ | cut -f1 -d.
+	echo $1 | cut -f3 -d/ | cut -f1 -d.
 }
 
-timefile=./timer.properties
 timestr="time:"
 function settime()
 {
@@ -24,11 +35,11 @@ function settime()
         local whichtime=$1
 		
 	# Should see if there is a timer running and kill it 
-	ps -ef | egrep timer.sh | egrep -v grep | tr -s ' ' | cut -f2 -d' ' | xargs -r kill -KILL  # kill any old timers laying around
+	ps -ef | egrep 99_timer.sh | egrep -v grep | tr -s ' ' | cut -f2 -d' ' | xargs -r kill -KILL  # kill any old timers laying around
 
         [[ $whichtime = 1 ]] && m=1 || m=45
         echo $timestr$m > $timefile
-	./timer.sh & # batch out the time
+	$bpath/99_timer.sh & # batch out the time
 }
 
 function gettime()
@@ -61,6 +72,21 @@ function datestamp()
 
 hteam=./h.scoreboard
 ateam=./a.scoreboard
+
+function setscoreboard()
+{
+	eval `echo $1`=$data/"$2".scoreboard
+}
+
+function gethomescoreboard()
+{
+	echo $hteam
+}
+
+function getawayscoreboard()
+{
+	echo $ateam
+}
 
 function initeach()
 {
