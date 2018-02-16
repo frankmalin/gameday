@@ -8,11 +8,13 @@
 . `dirname $0`/99_utilities.sh
 # This is only for unit test
 #set -x
+trace e
 [[ -e "$timefile" ]] || writetime 1
 dsleep=60
 sleeptime=$dsleep
 while true
 do
+	trace i "Sleeping $sleeptime"
 	sleep $sleeptime
 	lasttime=`gettime`
 	adjust=`readadjust`
@@ -29,10 +31,14 @@ do
 		sleeptime=$dsleep # change back to the default seelp time
 	fi
 	let lasttime+=1 # set the next minute
+	# TODO This need to know if it is first or second half because the second half check always fails the greater than 45
 	[[ $lasttime -eq 46 ]] && { writetime "45+" ; break ; } # end the first half
 	[[ $lasttime -eq 91 ]] && { writetime "90+" ; break ; } # end the second half
 	writetime $lasttime
+	# TODO this should be moved out, since if there is a lock, it will mess up clock
+	updateMinutesPlayed # This will update the number of minutes which a player has player
 	echo Minute: $lasttime
 done
+trace x
 # We are done updating the clock
 

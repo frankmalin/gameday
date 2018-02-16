@@ -3,7 +3,7 @@
 # This is the running stats, of the game and will be done with a running command line
 #
 # 	N	000	Ayo Adebayo (minutes played) (sub in) (sub out) (goal) (caution) (reason) (red) (reason)
-
+#set -x
 
 # team stats
 # shots
@@ -23,6 +23,8 @@
 
 . `dirname $0`/99_utilities.sh
 
+. "$data/gameday.properties"
+
 function usage()
 {
 	# This if the set of function to make the updates
@@ -40,6 +42,7 @@ function score()
 	update $team goals
 
 	# update player stats (not sure about own goal)
+	updateGoal $team $num $atminute
 }
 
 function assist()
@@ -56,11 +59,13 @@ function assist()
 # Here is the input item
 
 action="" # init the input action
+echo "GAME DAY>"
 while read action
 do
-	echo "action: $action"
+	echo "gameday $action"
 
 	# process the single characters	
+	echo "[INPUT] : $action"
 	single=`echo $action | cut -c1`
 	case "$single" in
 		+)  # increment the clock
@@ -104,7 +109,7 @@ do
                         num=`echo $action | cut -c3-`
                         [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
                         echo "Substitute In : $team, number $num @ miunute : `gettime`"
-			updateSubIn $team $num $timer
+			updateSubIn $team $num `gettime` 
                         ;;
                 o) # This is a sub out 
                         team=`echo $action | cut -c2`
@@ -112,7 +117,7 @@ do
                         num=`echo $action | cut -c3-`
                         [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
                         echo "Substitute out : $team, number $num @ miunute : `gettime`"
-                        updateSubOut $team $num $timer
+                        updateSubOut $team $num `gettime`
                        ;;
 		f) #  foul
                         team=`echo $action | cut -c2`
@@ -151,5 +156,6 @@ do
 		*) 
 			echo "Unknown option"
 		esac
+	echo "GAME DAY>" # Echo the prompt
 done
 

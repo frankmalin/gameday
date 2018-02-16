@@ -77,6 +77,9 @@ awayroster=$data/$awayteam.roster
 echo "export homeroster=$data/$hometeam.roster" >> $currentgame
 echo "export awayroster=$data/$awayteam.roster" >> $currentgame
 
+echo "export homescoreboard=$data/$hometeam.scoreboard" >> $currentgame
+echo "export awayscoreboard=$data/$awayteam.scoreboard" >> $currentgame
+
 [[ -e "$homeroster" ]] && mv $homeroster $homeroster-`datestamp`
 [[ -e "$awayroster" ]] && mv $awayroster $awayroster-`datestamp`
 
