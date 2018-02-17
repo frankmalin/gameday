@@ -36,7 +36,7 @@ do
 	[[ $lasttime -eq 91 ]] && { writetime "90+" ; break ; } # end the second half
 	writetime $lasttime
 	# TODO this should be moved out, since if there is a lock, it will mess up clock
-	updateMinutesPlayed # This will update the number of minutes which a player has player
+	99_minuteupdate.sh # This will update the number of minutes which a player has player
 	echo Minute: $lasttime
 done
 trace x

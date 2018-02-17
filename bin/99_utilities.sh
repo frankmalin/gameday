@@ -26,7 +26,7 @@ function trace()
 		*) tracetype="[$1]"
 	esac; shift
 	local functionname=${FUNCNAME[*]}
-	echo $tracetype $functionname $@
+	echo $tracetype `echo $0 | rev | cut -f1 -d/ | rev` $functionname $@
 }
 
 
@@ -165,7 +165,6 @@ function playerlock()
 	trace e
 	while true
 	do
-		trace d "Attempting to mkdir: `ls $data|xargs echo`"
 		if mkdir $data/playerlock ; then
 			trace i "Player daatabase LOCKED"
 			break; # lock the entire player data
