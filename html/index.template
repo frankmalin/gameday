@@ -21,8 +21,8 @@ td {
 
     <TD>
 	<TABLE  style="font-family:arial;"  BORDER="6" CELLPADDING="6" CELLSPACING="6">
-		<col width="100">
-		<col width="100">
+		<col width="110">
+		<col width="110">
 		<th colspan="2">Minute @@MINUTE@@</th>
 		<tr><TD>@@h_team@@</TD><TD>@@a_team@@</TD></TR>
                <TR><TD>@@h_goals@@</TD><TD>@@a_goals@@</TD></TR>
