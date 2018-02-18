@@ -10,15 +10,28 @@
 #
 # Display the game report
 #
-set -x
+#set -x
 
 
-. `dirname $0`/99_utilities.sh
+. `dirname $0`/00_utilities.sh
+
+baselink="http://npsl.bonzidev.com/teams"
+logolink="http://npsl.bonzidev.com/imagedata"
 
 function findTeamBonziLink() {
 	local teamName=$1
-	local teamLink=`lynx -dump http://npsl.bonzidev.com/teams | egrep sam.team | egrep -i "$teamName" | tr -s ' ' | cut -f3 -d' ' | tr ' ' '\n'` # try to find only one link
+	local teamLink=`lynx -dump $baselink | egrep sam.team | egrep -i "$teamName" | tr -s ' ' | cut -f3 -d' ' | tr ' ' '\n'` # try to find only one link
 	[[ `echo $teamLink | wc -l` -eq 1 ]] && echo findTeamBonziLink: $teamLink || { echo error, too many or too few links for : $teamName, result: $teamLink ; exit 1 ; }
+}
+
+function findTeamLogo() {
+	#http://npsl.bonzidev.com/imagedata/logo_Med_City_FC.png
+	local lookupName=$1
+	local logoName=`lynx -dump $baselink  | egrep -i logo | egrep -i "$lookupName" | tr '[' '\n'  | egrep -i "$lookupName" | cut -f1 -d']'`
+	#local teamName=`echo $teamName | cut -f2 -d'_' | cut -f1 -d'.'`
+	#wget $logolink/$logoName
+	#mv $logoName $data/
+	echo findTeamLogo: $logolink/$logoName
 }
 
 function buildRoster()
@@ -61,6 +74,13 @@ process_args $@
 homelink=`findTeamBonziLink $home | egrep "findTeamBonziLink:" | cut -f2- -d:`
 awaylink=`findTeamBonziLink $away | egrep "findTeamBonziLink:" | cut -f2- -d:`
 
+hometeamlogo=`findTeamLogo $home | egrep "findTeamLogo:" | cut -f2- -d: | tr -d ' '`
+awayteamlogo=`findTeamLogo $away | egrep "findTeamLogo:" | cut -f2- -d: | tr -d ' '`
+
+
+hometeamname=`echo $hometeamlogo | rev | cut -f1 -d'/' | rev | cut -f2- -d'_' | cut -f1 -d'.'`
+awayteamname=`echo $awayteamlogo | rev | cut -f1 -d'/' | rev | cut -f2- -d'_' | cut -f1 -d'.'`
+
 # TODO change to the call above for the real links
 homelink=http://medcityfc.bonzidev.com/sam/teams/index.php?team=3433240
 awaylink=http://vsltfc.bonzidev.com/sam/teams/index.php?team=3426140 
@@ -69,6 +89,18 @@ hometeam=`fromlink $homelink`
 awayteam=`fromlink $awaylink`
 
 rm $currentgame # this should be the first writes to te file
+
+# Base image link
+echo "export baseimage=/mfcgameday/images" >> $currentgame
+echo "export baseimagelink=https://s3.us-east-2.amazonaws.com$baseimage" >> $currentgame
+
+
+echo "export hometeamname=\"$hometeamname\"" >> $currentgame
+echo "export awayteamname=\"$awayteamname\"" >> $currentgame
+
+echo "export hometeamlogo=$hometeamlogo" >> $currentgame
+echo "export awayteamlogo=$awayteamlogo" >> $currentgame
+
 echo "export hometeam=$hometeam" >> $currentgame
 echo "export awayteam=$awayteam" >> $currentgame
 

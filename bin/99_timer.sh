@@ -5,7 +5,7 @@
 # The time will run for the first 45, and the 90 setting a time of 45+ and 90+ for extra time
 # it is possible to adjust the clock from the command line with + and - commands with the number of seconds
 #
-. `dirname $0`/99_utilities.sh
+. `dirname $0`/00_utilities.sh
 # This is only for unit test
 #set -x
 trace e

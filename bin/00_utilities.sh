@@ -6,7 +6,7 @@
 rpath=$bpath/../
 props=$rpath/properties
 data=$rpath/data
-reports=$rpath/html
+html=$rpath/html
 
 currentgame=$data/gameday.properties
 timefile=$data/timer.properties
@@ -91,9 +91,13 @@ function datestamp()
 function initeach()
 {
 	local whichboard=$1
+	local teamname=$2
+	local teamlogo=$3
 	[[ -e "$whichboard" ]] && mv $whichboard $whichboard-`datestamp`
 
-	echo goals:0 > $whichboard
+	echo team:`echo $teamname| tr '_' ' '` > $whichboard
+	echo logo:$teamlogo >> $whichboard
+	echo goals:0 >> $whichboard
 	echo corners:0 >> $whichboard
         echo fouls:0 >> $whichboard
 	echo shots:0 >> $whichboard
@@ -105,8 +109,8 @@ function initeach()
 
 function initscoreboards()
 {
-	initeach $homescoreboard
-	initeach $awayscoreboard
+	initeach $homescoreboard $hometeamname $hometeamlogo
+	initeach $awayscoreboard $awayteamname $awayteamlogo
 }
 
 function update()
@@ -146,15 +150,14 @@ function updateTeamMinutes()
 	if [ ! "$currenttime" = *"+"* ] ; then
 		# Loop thru the players and update the time
 		cat $roster | egrep "^\sS|^\sP" | cut -f2 | while read num
-			do
-				trace d "Read number: $num"
-				playerread $rosterP $num
-				let pm=currenttime-psi
-				trace d "player minutes: $pm"
-				playerwrite
-				trace d "player write"
-			done
-				
+		do
+			trace d "Read number: $num"
+			playerread $rosterP $num
+			let pm=currenttime-psi
+			trace d "player minutes: $pm"
+			playerwrite
+			trace d "player write"
+		done
 	fi
 	trace x
 
@@ -203,8 +206,9 @@ prr=""
 function playerread()
 {
 	trace e
+	local nolock=$1 # I think that we would need to do an unlock ... after the write of the data
 # could produce a lock 
-	playerlock
+	[[ -z "$nolock" ]] && playerlock
 	local rosterP=$1
 	local number=$2
 
@@ -236,6 +240,37 @@ function playerwrite()
         sed -i "${pindex}s/.*/$line/" $pfile
 	playerunlock
 	trace x
+}
+
+function updatePlayer()
+{
+	trace e
+	local rosterP=$2
+	local whichtable=$1
+	shift; shift
+	[[ $roster = "h" ]] && roster=$homeroster || roster=$awayroster
+	echo "<!-- begin roster $rosterP for $whichtable -->" > $data/${rosterP}_${whichtable}
+	[[ `egrep "^\s$whichtable\s" $roster` ]] && set `egrep "^\s$whichtable\s" $roster | cut -f3`
+	while test $# -gt 0
+	do
+		playerHtmlRecord $rosterP $1 | egrep "playerHtmlRecord:" | cut -f2- -d':'  >> $data/${rosterP}_${whichtable}
+		shift
+	done 
+	sed -i -e "/@@${rosterP}_${whichtable}@@/r $data/${rosterP}_${whichtable}" $html/index.html
+	sed -i "/@@${rosterP}_${whichtable}@@/d" $html/index.html
+	trace x
+}
+
+function playerHtmlRecord()
+{
+	local roster=$1
+	local number=$2
+	
+	playerread $roster $number
+	dpname=`echo $pname | tr _ ' '`
+	returnR=`cat $html/$roster.player | sed  "s/@@pnum@@/$pnum/g; s/@@pname@@/$dpname/g; s/@@pg@@/$pg/g; s/@@pm@@/$pm/g; s/@@py@@/$py/g; s/@@pr@@/$pr/g"`
+	echo "playerHtmlRecord:$returnR" # This is the return html recored with the updated customer
+	playerunlock
 }
 
 function updateGoal()

@@ -21,7 +21,7 @@
 
 ####
 
-. `dirname $0`/99_utilities.sh
+. `dirname $0`/00_utilities.sh
 
 . "$data/gameday.properties"
 
@@ -148,6 +148,9 @@ do
 			;;
 		E) # Exit
 			break
+			;;
+		K) # This is really for using in test, to kill the timer
+			ps -ef | egrep timer.sh | egrep -v grep | tr -s ' ' | cut -f2 -d' '  | xargs -i kill -KILL {}
 			;;
 		[?H]) # Help
 			usage

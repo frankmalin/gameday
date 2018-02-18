@@ -3,7 +3,7 @@
 <head>
 <style>
 body  {
-    background-image: url("mc.png");
+    background-image: url("https://s3.us-east-2.amazonaws.com/mfcgameday/images/mc.png");
     background-repeat: repeat;
     background-attachment: fixed;
     
@@ -17,71 +17,91 @@ td {
 <body>
 
      <TABLE  style="font-family:arial;" BORDER="10" CELLPADDING="10" CELLSPACING="10" id="t01" align="center">
-    <TD> <img src="./logo_Med_City_FC.png" alt="Go Med City FC" border=3 height=300 width=300></img></TD>
+    <TD> <img src="@@h_logo@@" alt="Go Med City FC" border=3 height=300 width=300></img></TD>
 
     <TD>
 	<TABLE  style="font-family:arial;"  BORDER="6" CELLPADDING="6" CELLSPACING="6">
-		<th colspan="2">Period 1 Minute 25</th>
-		<tr><TD>HOME</TD><TD>AWAY</TD></TR>
-               <TR><TD>10</TD><TD>0</TD></TR>
+		<col width="100">
+		<col width="100">
+		<th colspan="2">Minute @@MINUTE@@</th>
+		<tr><TD>@@h_team@@</TD><TD>@@a_team@@</TD></TR>
+               <TR><TD>@@h_goals@@</TD><TD>@@a_goals@@</TD></TR>
     	</TABLE>
-    	<TABLE WIDTH="180"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+    	<TABLE WIDTH="240"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <!-- I think that this is a table row -->
+                <col width="50">
+                <col width="120">
+                <col width="50">
 		<th colspan="3">Game stats</th>
-    		<tr> <TD>0</TD><TD>SOG</TD><TD>0</TD></TD><TR>
-		<tr> <TD>0</TD><TD>Save</TD><TD>0</TD></TD><TR>
-                <tr> <TD>0</TD><TD>Shots</TD><TD>0</TD></TD><TR>
-		<tr> <TD>0</TD><TD>Corner</TD><TD>0</TD></TD><TR>
-		<tr> <TD>0</TD><TD>Fouls</TD><TD>0</TD></TD><TR>
-		<tr> <TD>0</TD><TD>Yellow</TD><TD>0</TD></TD><TR>
-		<tr> <TD>0</TD><TD>Red</TD><TD>0</TD></TD><TR>
+    		<tr> <TD>@@a_saves@@</TD><TD>SOG</TD><TD>@@h_saves@@</TD></TD><TR>
+		<tr> <TD>@@h_saves@@</TD><TD>Saves</TD><TD>@@a_saves@@</TD></TD><TR>
+                <tr> <TD>@@h_shots@@</TD><TD>Shots</TD><TD>@@a_shots@@</TD></TD><TR>
+		<tr> <TD>@@h_corners@@</TD><TD>Corner</TD><TD>@@a_corners@@</TD></TD><TR>
+		<tr> <TD>@@h_fouls@@</TD><TD>Fouls</TD><TD>@@a_fouls@@</TD></TD><TR>
+		<tr> <TD>@@h_cautions@@</TD><TD>Yellow</TD><TD>@@a_cautions@@</TD></TD><TR>
+		<tr> <TD>@@h_reds@@</TD><TD>Red</TD><TD>@@a_reds@@</TD></TD><TR>
 
 	</table>
     </TD>
-    <TD> <img src="./logo_VSLT_FC.png" alt="" border=3 height=300 width=300></img> </TD>
+    <TD> <img src="@@a_logo@@" alt="" border=3 height=300 width=300></img> </TD>
     </TABLE> 
 <!-- This is the start of the team stats -->
 
 <TABLE  style="font-family:arial;" BORDER="10" CELLPADDING="10" CELLSPACING="10" id="t01" align="center">
 	<TD>
 	        <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6" > On Pitch</th>
 <tr><th>Num</th><th>Name</th><th>Goals</th><th>Min</th><th>Caution</th><th>Red</th><tr>
-<tr><td>1</td><td>Nate_Levy</td><td>14</td><td>90</td><td>25</td><td>0</td></tr>
-<tr><td>2</td><td>Javier_Gomez</td><td>14</td><td>90</td><td>25</td><td>0</td></tr>
-<tr><td>3</td><td>Fredrik_Månsson</td><td>14</td><td>90</td><td>25</td><td>0</td></tr>
-<tr><td>4</td><td>Nicholas_Bryden</td><td>14</td><td>90</td><td>25</td><td>0</td></tr>
-<tr><td>5</td><td>Ignacio_Milla</td><td>14</td><td>90</td><td>25</td><td>0</td></tr>
-<tr><td>6</td><td>Ignacio_Garrid</td><td>14</td><td>90</td><td>25</td><td>0</td></tr>
-<tr><td>7</td><td>Jose_Pizarro</td><td>14</td><td>90</td><td>25</td><td>0</td></tr>
-<tr><td>8</td><td>Ludvig_Hordegard</td><td>14</td><td>90</td><td>25</td><td>0</td></tr>
-<tr><td>9</td><td>James_Larson</td><td>14</td><td>90</td><td>25</td><td>0</td></tr>
-<tr><td>10</td><td>Frank Malin</td><td>14</td><td>90</td><td>25</td><td>0</td></tr>
-<tr><td>11</td><td>Jake_Turnbull</td><td>14</td><td>90</td><td>25</td><td>0</td></tr>
-
-
+@@h_S@@
 		</TABLE>
 
 	</TD>
 	<TD>
 	        <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6" > On Pitch</th>
 <tr><th>Red</th><th>caution</th><th>Min</th><th>Goal</th><th>Name</th><th>Num</th><tr>
-<tr><td>0</td><td>0</td><td>45</td><td>0</td><td>Ayo_Adebayo</td><td>1</td></tr>
-<tr><td>0</td><td>0</td><td>45</td><td>0</td><td>Jose_Herrera</td><td>2</td></tr>
-<tr><td>0</td><td>0</td><td>45</td><td>0</td><td>Angel_Morales</td><td>3</td></tr>
-<tr><td>0</td><td>0</td><td>45</td><td>0</td><td>Pedro Matias Diaz Galeano</td><td>4</td></tr>
-<tr><td>0</td><td>0</td><td>45</td><td>0</td><td>Edi_Buro</td><td>5</td></tr>
-<tr><td>0</td><td>0</td><td>45</td><td>0</td><td>Pele</td><td>5</td></tr>
-<tr><td>0</td><td>0</td><td>45</td><td>0</td><td>Pele</td><td>6</td></tr>
-<tr><td>0</td><td>0</td><td>45</td><td>0</td><td>Pele</td><td>8</td></tr>
-<tr><td>0</td><td>0</td><td>45</td><td>0</td><td>Pele</td><td>9</td></tr>
-<tr><td>0</td><td>0</td><td>45</td><td>0</td><td>Pele</td><td>10</td></tr>
-<tr><td>0</td><td>0</td><td>45</td><td>0</td><td>Pele</td><td>1</td></tr>
-
-
-
-
-		<TABLE>
+@@a_S@@
+		</TABLE>
 	</TD>
-<table>
+</table>
+<!-- This is the reseve table -->
+
+<TABLE  style="font-family:arial;" BORDER="10" CELLPADDING="10" CELLSPACING="10" id="t01" align="center">
+        <TD>
+                <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6">Sub Out</th>
+<tr><th>Num</th><th>Name</th><th>Goals</th><th>Min</th><th>Caution</th><th>Red</th><tr>
+@@h_O@@
+                </TABLE>
+
+        </TD>
+        <TD>
+                <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6" > Sub Out</th>
+<tr><th>Red</th><th>caution</th><th>Min</th><th>Goal</th><th>Name</th><th>Num</th><tr>
+@@a_O@@
+                </TABLE>
+        </TD>
+</table>
+
+<TABLE  style="font-family:arial;" BORDER="10" CELLPADDING="10" CELLSPACING="10" id="t01" align="center">
+        <TD>
+                <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6" > Reserves</th>
+<tr><th>Num</th><th>Name</th><th>Goals</th><th>Min</th><th>Caution</th><th>Red</th><tr>
+@@h_R@@
+                </TABLE>
+
+        </TD>
+        <TD>
+                <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6" > Reserves</th>
+<tr><th>Red</th><th>caution</th><th>Min</th><th>Goal</th><th>Name</th><th>Num</th><tr>
+@@a_R@@
+                </TABLE>
+        </TD>
+</table>
+
+
 
 <body>

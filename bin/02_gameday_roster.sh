@@ -4,8 +4,8 @@
 #
 
 # map the home and away parameter to the correct team roster
-set -x
-. `dirname $0`/99_utilities.sh
+#set -x
+. `dirname $0`/00_utilities.sh
 
 . $currentgame
 
@@ -21,7 +21,7 @@ function nonRoster()
 	## Add in the remainder of the fields
 	cat $file | while read line
 	do
-		sed -i "s#$line#$line\t0\t0\t0\t0\t0\t0#g" $file
+		sed -i "s#$line#$line\t0\t0\t0\t0\t0\t0\t0\t0#g" $file
 	done
 }
 
