@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body  {
+    background-image: url("https://s3.us-east-2.amazonaws.com/mfcgameday/images/mc.png");
+    background-repeat: repeat;
+    background-attachment: fixed;
+    
+}
+td {
+  text-align: center;
+  vertical-align: middle;
+}
+</style>
+</head>
+<body>
+
+     <TABLE  style="font-family:arial;" BORDER="10" CELLPADDING="10" CELLSPACING="10" id="t01" align="center">
+    <TD> <img src="@@h_logo@@" alt="Go Med City FC" border=3 height=300 width=300></img></TD>
+
+    <TD>
+	<TABLE  style="font-family:arial;"  BORDER="6" CELLPADDING="6" CELLSPACING="6">
+		<col width="110">
+		<col width="110">
+		<th colspan="2">Minute @@MINUTE@@</th>
+		<tr><TD>@@h_team@@</TD><TD>@@a_team@@</TD></TR>
+               <TR><TD>@@h_goals@@</TD><TD>@@a_goals@@</TD></TR>
+    	</TABLE>
+    	<TABLE WIDTH="240"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<!-- I think that this is a table row -->
+                <col width="50">
+                <col width="120">
+                <col width="50">
+		<th colspan="3">Game stats</th>
+    		<tr> <TD>@@a_saves@@</TD><TD>SOG</TD><TD>@@h_saves@@</TD></TD><TR>
+		<tr> <TD>@@h_saves@@</TD><TD>Saves</TD><TD>@@a_saves@@</TD></TD><TR>
+                <tr> <TD>@@h_shots@@</TD><TD>Shots</TD><TD>@@a_shots@@</TD></TD><TR>
+		<tr> <TD>@@h_corners@@</TD><TD>Corner</TD><TD>@@a_corners@@</TD></TD><TR>
+		<tr> <TD>@@h_fouls@@</TD><TD>Fouls</TD><TD>@@a_fouls@@</TD></TD><TR>
+		<tr> <TD>@@h_cautions@@</TD><TD>Yellow</TD><TD>@@a_cautions@@</TD></TD><TR>
+		<tr> <TD>@@h_reds@@</TD><TD>Red</TD><TD>@@a_reds@@</TD></TD><TR>
+
+	</table>
+    </TD>
+    <TD> <img src="@@a_logo@@" alt="" border=3 height=300 width=300></img> </TD>
+    </TABLE> 
+<!-- This is the start of the team stats -->
+
+<TABLE  style="font-family:arial;" BORDER="10" CELLPADDING="10" CELLSPACING="10" id="t01" align="center">
+	<TD>
+	        <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6" > On Pitch</th>
+<tr><th>Num</th><th>Name</th><th>Goals</th><th>Min</th><th>Caution</th><th>Red</th><tr>
+@@h_S@@
+		</TABLE>
+
+	</TD>
+	<TD>
+	        <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6" > On Pitch</th>
+<tr><th>Red</th><th>caution</th><th>Min</th><th>Goal</th><th>Name</th><th>Num</th><tr>
+@@a_S@@
+		</TABLE>
+	</TD>
+</table>
+<!-- This is the reseve table -->
+
+<TABLE  style="font-family:arial;" BORDER="10" CELLPADDING="10" CELLSPACING="10" id="t01" align="center">
+        <TD>
+                <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6">Sub Out</th>
+<tr><th>Num</th><th>Name</th><th>Goals</th><th>Min</th><th>Caution</th><th>Red</th><tr>
+@@h_O@@
+                </TABLE>
+
+        </TD>
+        <TD>
+                <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6" > Sub Out</th>
+<tr><th>Red</th><th>caution</th><th>Min</th><th>Goal</th><th>Name</th><th>Num</th><tr>
+@@a_O@@
+                </TABLE>
+        </TD>
+</table>
+
+<TABLE  style="font-family:arial;" BORDER="10" CELLPADDING="10" CELLSPACING="10" id="t01" align="center">
+        <TD>
+                <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6" > Reserves</th>
+<tr><th>Num</th><th>Name</th><th>Goals</th><th>Min</th><th>Caution</th><th>Red</th><tr>
+@@h_R@@
+                </TABLE>
+
+        </TD>
+        <TD>
+                <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
+<th colspan="6" > Reserves</th>
+<tr><th>Red</th><th>caution</th><th>Min</th><th>Goal</th><th>Name</th><th>Num</th><tr>
+@@a_R@@
+                </TABLE>
+        </TD>
+</table>
+
+
+
+<body>
