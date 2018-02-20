@@ -52,7 +52,7 @@ function buildRoster()
 	while test $# -gt 0
 	do
 		# This is a parse of the output
-		[[ `echo $1 | egrep "^_[0-9]"` || `echo $1 | egrep "^.*_.*$"` ]] && echo good || { echo end of roster ; break ; } 
+		[[ `echo $1 | egrep "^_[0-9]"` || `echo $1 | egrep "^.*_.*$"` ]] || { echo end of roster ; break ; } 
 		[[ `echo $1 | egrep "^_[0-9]"` ]] && { number=`echo $1 | cut -c2- | cut -f1 -d'_'` ; ncut=3 ; } || { number=000 ; ncut=2 ; }	
 		name=`echo $1 | cut -f${ncut}- -d'_'`
 		echo -e  "\t$number\t$name" >> $teamroster.raw
@@ -117,9 +117,5 @@ echo "export awayscoreboard=$data/$awayteam.scoreboard" >> $currentgame
 
 buildRoster $homelink $homeroster
 buildRoster $awaylink $awayroster
-
-
-cat $homeroster
-cat $awayroster
 
 # Need to feed this into a web page to allow selection of starters

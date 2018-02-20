@@ -9,14 +9,17 @@
 # This is only for unit test
 #set -x
 trace e
-[[ -e "$timefile" ]] || writetime 1
+testmode=""
+[[ -e "$timefile" ]] || { writetime $1 $2 ; testmode=true ; } # this should only be executed for test, starting with 1 min, first 1/2
 dsleep=60
+extratime=0
 sleeptime=$dsleep
 while true
 do
 	trace i "Sleeping $sleeptime"
 	sleep $sleeptime
 	lasttime=`gettime`
+	halftime=`gethalf`
 	adjust=`readadjust`
 	if [[ ! -z "$adjust" ]] ; then # We have to adjust the time a little here
 		if [[ `echo $adjust | cut -c1` = "+" ]] ; then
@@ -30,14 +33,15 @@ do
 	else
 		sleeptime=$dsleep # change back to the default seelp time
 	fi
-	let lasttime+=1 # set the next minute
 	# TODO This need to know if it is first or second half because the second half check always fails the greater than 45
-	[[ $lasttime -eq 46 ]] && { writetime "45+" ; break ; } # end the first half
-	[[ $lasttime -eq 91 ]] && { writetime "90+" ; break ; } # end the second half
-	writetime $lasttime
-	# TODO this should be moved out, since if there is a lock, it will mess up clock
-	99_minuteupdate.sh # This will update the number of minutes which a player has player
-	echo Minute: $lasttime
+	[[ `echo $lasttime|tr -d '+'` -eq 45 && `gethalf` = "1" ]] && { writetime "45+" $halftime; } # end the first half
+	[[ `echo $lasttime|tr -d '+'` -eq 90 && `gethalf` = "2" ]] && { writetime "90+" $halftime; } # end the second half
+	[[ "`echo $lasttime | cut -c3`" != "+" ]] && let lasttime+=1 || let extratime+=1 # increment the clock
+	writetime $lasttime $halftime
+	# Call to make the updates for the minute update, as well as the publish of the data
+	[[ -z "$testmode" ]] && $bpath/99_minuteupdate.sh &
+	trace i "Minute : $lasttime"
+	[[ $extratime -gt 10 ]] && break
 done
 trace x
 # We are done updating the clock

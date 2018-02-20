@@ -1,5 +1,4 @@
-#+ cat /home/malin/github.com/gameday/bin/.//..//data/vsltfc.roster
-
+#
 # This is a set of common utilities
 #
 [[ `dirname $0 | cut -c1` = '/' ]] && bpath=`dirname $0`/ || bpath=`pwd`/`dirname $0`/
@@ -7,15 +6,40 @@ rpath=$bpath/../
 props=$rpath/properties
 data=$rpath/data
 html=$rpath/html
+log=$rpath/log
 
 currentgame=$data/gameday.properties
 timefile=$data/timer.properties
 
+# These are player fields
+# we are single threaded, so can use global for these ... we expect to retrieve, update, write in a short period of time
+pindex=""
+pfile=""
+pstatus=""
+pnum=""
+pname=""
+pg=""
+pm=""
+psi=""
+pso=""
+py=""
+pyr=""
+pr=""
+prr=""
+
+
+
 function trace()
 {
+	local inTrace=$1
 	local tracetype=""
-	case $1 in
+	local tabs=""
+
+	[[ ! -d $log ]] && mkdir -p $log
+	case $inTrace in
 		e) tracetype="[ENTRY]"
+		;;
+		E) tracetype="[ERROR]"
 		;;
 		x) tracetype="[EXIT]"
 		;;
@@ -23,10 +47,33 @@ function trace()
 		;;
 		i) tracetype="[INFO]"
 		;;
+		v) tracetype="[EVENT]"
+		;;
 		*) tracetype="[$1]"
 	esac; shift
-	local functionname=${FUNCNAME[*]}
-	echo $tracetype `echo $0 | rev | cut -f1 -d/ | rev` $functionname $@
+	## Get trace information and formatting
+	local functionname=${FUNCNAME[1]}
+	tabcount=${#FUNCNAME[@]}
+	for i in `seq 3 $tabcount`; do echo -n -e "\t" >>$log/ALL.log; done
+	echo -e "$tracetype `echo $0 | rev | cut -f1 -d/ | rev` $functionname $@" >> $log/ALL.log
+	echo $@ >> $log/`echo $tracetype | cut -f2 -d'[' | cut -f1 -d']'`.log
+	[[ "$tracetype" = "ERROR" ]] && echo -e "$tracetype `echo $0 | rev | cut -f1 -d/ | rev` $functionname $@"
+}
+
+function teamname()
+{
+	local team=$1
+	[[ "$team" = "h" ]] && echo $hometeamname || echo $awayteamname=
+	
+}
+
+function playername()
+{
+	local team=$1
+	local num=$2
+	local roster=""
+	[[ "$team" = "h" ]] && roster=$homeroster || roster=$awayroster
+	egrep "^\s.\s$num\s" $roster | cut -f4 | tr '_' ' '
 }
 
 
@@ -46,7 +93,13 @@ function fromlink()
 	echo $1 | cut -f3 -d/ | cut -f1 -d.
 }
 
+function otherteam()
+{
+	[[ "$1" = "h" ]] && echo "a" || echo "h"
+}
+
 timestr="time:"
+halfstr="half:"
 function settime()
 {
         # this will start the time
@@ -55,9 +108,18 @@ function settime()
 	# Should see if there is a timer running and kill it 
 	ps -ef | egrep 99_timer.sh | egrep -v grep | tr -s ' ' | cut -f2 -d' ' | xargs -r kill -KILL  # kill any old timers laying around
 
-        [[ $whichtime = 1 ]] && m=1 || m=45
+	case $whichtime in
+		1) m=1
+		;;
+		2) m=46
+		;;
+		h) m="Halftime"
+		;;
+		*) trace E "Invalid option: $whichtime"
+	esac
         echo $timestr$m > $timefile
-	$bpath/99_timer.sh & # batch out the time
+	echo $halfstr$whichtime >> $timefile
+	[[ $whichtime = "1" || $whichtime = "2" ]] && $bpath/99_timer.sh & # batch out the time
 }
 
 function gettime()
@@ -65,10 +127,16 @@ function gettime()
 	egrep $timestr $timefile | cut -f2 -d:
 }
 
+function gethalf()
+{
+	egrep $halfstr $timefile | cut -f2 -d:
+}
+
 function writetime()
 {
 	# This is a setting from the time
 	echo $timestr$1 > $timefile
+	echo $halfstr$2 >> $timefile
 }
 
 function adjusttime()
@@ -80,7 +148,7 @@ function adjusttime()
 function readadjust() 
 {
 	# return the adjustment needed to the time
-	egrep "\+|\-" $timefile
+	egrep "^\+|^\-" $timefile
 }
 
 function datestamp()
@@ -98,6 +166,7 @@ function initeach()
 	echo team:`echo $teamname| tr '_' ' '` > $whichboard
 	echo logo:$teamlogo >> $whichboard
 	echo goals:0 >> $whichboard
+	echo sog:0 >> $whichboard
 	echo corners:0 >> $whichboard
         echo fouls:0 >> $whichboard
 	echo shots:0 >> $whichboard
@@ -118,15 +187,17 @@ function update()
 	local team=$1
 	local attribute=$2
 	local scoreboard=${team}scoreboard
+	trace e $2
 	[[ "$team" = "h" ]] && scoreboard=$homescoreboard || scoreboard=$awayscoreboard
 
-	local linenum=`egrep -n "$attribute:" $scoreboard | cut -f1 -d':'`
+	local linenum=`egrep -n "$attribute:" $scoreboard | cut -f1 -d':'` || { trace E "Missing scoreboard attribute: $attribute" ; return 1 ; }
 
 	local value=`egrep "$attribute:" $scoreboard | cut -f2 -d':'`
 	let value++
 	let after=linenum-1
 
 	sed -i "${linenum}s/.*/$attribute:$value/" $scoreboard
+	trace x
 }
 
 function updateMinutesPlayed()
@@ -147,18 +218,24 @@ function updateTeamMinutes()
 
 	trace e
 	local currenttime=`gettime`
-	if [ ! "$currenttime" = *"+"* ] ; then
+	if [[ ! "$currenttime" = *"+"* ]] ; then
 		# Loop thru the players and update the time
-		cat $roster | egrep "^\sS|^\sP" | cut -f2 | while read num
+		trace d "`egrep "^\sS\s" $roster | cut -f3`"
+		set `egrep "^\sS\s" $roster | cut -f3`
+		while test $# -gt 0
 		do
+			num=$1
 			trace d "Read number: $num"
 			playerread $rosterP $num
-			let pm=currenttime-psi
+			let lpm=currenttime-psi
+			pm=$lpm
 			trace d "player minutes: $pm"
 			playerwrite
 			trace d "player write"
+			shift
 		done
 	fi
+	trace d "Exit $pm"
 	trace x
 
 }
@@ -187,26 +264,10 @@ function playerunlock()
 	trace x
 }
 
-# These are player fields
-# we are single threaded, so can use global for these ... we expect to retrieve, update, write in a short period of time
-pindex=""
-pfile=""
-pstatus=""
-pnum=""
-pname=""
-pg=""
-pm=""
-psi=""
-pso=""
-py=""
-pyr=""
-pr=""
-prr=""
-
 function playerread()
 {
 	trace e
-	local nolock=$1 # I think that we would need to do an unlock ... after the write of the data
+	local nolock=$3 # I think that we would need to do an unlock ... after the write of the data
 # could produce a lock 
 	[[ -z "$nolock" ]] && playerlock
 	local rosterP=$1
@@ -219,6 +280,7 @@ function playerread()
 	pfile=$roster
 	pindex=`egrep -n "^\s\S\s$number\s" $roster | cut -f1 -d:` # this will find the player and the line number
 	p=`egrep "^\s\S\s$number\s" $roster` 
+	trace i $p
 	pstatus=`echo $p | tr -s ' ' | cut -f1 -d' '`
 	pnum=`echo $p | tr -s ' ' | cut -f2 -d' '`
 	pname=`echo $p | tr -s ' '| cut -f3 -d' '`
@@ -230,13 +292,15 @@ function playerread()
 	pyr=`echo $p | tr -s ' '| cut -f9 -d' '`
 	pr=`echo $p | tr -s ' '| cut -f10 -d' '`
 	prr=`echo $p | tr -s ' '| cut -f11 -d' '`
+trace d "$pstatus $pnum $pname $pg $pm ..."
 	trace x
 }
 
 function playerwrite()
 {
 	trace e
-	local line="\t$pstatus\t$pnum\t$pname\t$pg\t$psi\t$pso\t$py\t$pyr\t$pr\t$prr"
+	local line="\t$pstatus\t$pnum\t$pname\t$pg\t$pm\t$psi\t$pso\t$py\t$pyr\t$pr\t$prr"
+	trace d $line
         sed -i "${pindex}s/.*/$line/" $pfile
 	playerunlock
 	trace x
@@ -244,12 +308,13 @@ function playerwrite()
 
 function updatePlayer()
 {
-	trace e
+	trace e "$1 $2"
 	local rosterP=$2
 	local whichtable=$1
 	shift; shift
-	[[ $roster = "h" ]] && roster=$homeroster || roster=$awayroster
+	[[ $rosterP = "h" ]] && roster=$homeroster || roster=$awayroster
 	echo "<!-- begin roster $rosterP for $whichtable -->" > $data/${rosterP}_${whichtable}
+	trace d  "egrep "^\s$whichtable\s" $roster  `egrep "^\s$whichtable\s" $roster | cut -f3`"
 	[[ `egrep "^\s$whichtable\s" $roster` ]] && set `egrep "^\s$whichtable\s" $roster | cut -f3`
 	while test $# -gt 0
 	do
@@ -265,12 +330,14 @@ function playerHtmlRecord()
 {
 	local roster=$1
 	local number=$2
+	trace e $1 $2
 	
 	playerread $roster $number
 	dpname=`echo $pname | tr _ ' '`
 	returnR=`cat $html/$roster.player | sed  "s/@@pnum@@/$pnum/g; s/@@pname@@/$dpname/g; s/@@pg@@/$pg/g; s/@@pm@@/$pm/g; s/@@py@@/$py/g; s/@@pr@@/$pr/g"`
 	echo "playerHtmlRecord:$returnR" # This is the return html recored with the updated customer
 	playerunlock
+	trace x
 }
 
 function updateGoal()
@@ -281,7 +348,7 @@ function updateGoal()
 	local goaltime=$3
         
         playerread $roster $number
-        pg=`echo "${pg}_${goaltime}" | sed "s/^0_//g"` # Need connector field
+        pg=`echo "${pg}_@${goaltime}" | sed "s/^0_//g"` # Need connector field
         playerwrite
 
 }
@@ -295,7 +362,7 @@ function updateSubIn()
 	
 	playerread $roster $number
 	psi=$timein
-	pstatus='P'
+	pstatus='S'
 	playerwrite
 }
 
