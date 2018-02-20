@@ -50,13 +50,20 @@ function updatePlayersHtml()
 	trace x
 }
 
+function pushTheData()
+{
+	# Prereq aws cli installed on machine	
+	# connection information configured for aws
+	aws s3 cp $html/index.html s3://mfcgameday/currentgame/ --acl public-read
+}
+
 # Make the call to update the minutes played.
-#updateMinutesPlayed
+updateMinutesPlayed
 
 # Update the scoreboard
 updateScoreBoard
 updatePlayersHtml
 
 # push the data to the static web server
-# pushTheData
+ pushTheData
 
