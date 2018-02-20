@@ -74,12 +74,11 @@ function assist()
 # Here is the input item
 
 action="" # init the input action
-clockistte="stopped"
+clockstate="stopped"
 echo -n "GAME DAY> "
 while read action
 do
 
-	[[ "$clockstate" = "stopped" ]] && { trace e "Clock not started, please start the clock" ; continue ; }
 	echo "gameday $action"
 
 	# process the single characters	
@@ -213,6 +212,8 @@ do
 		*) 
 			trace i "Unknown option: $single"
 		esac
+        [[ "$clockstate" = "stopped" ]] && { trace e "Clock is not running please start the clock" ; }
+
 	echo -n "GAME DAY> " # Echo the prompt
 done
 
