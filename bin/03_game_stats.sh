@@ -79,7 +79,6 @@ echo -n "GAME DAY> "
 while read action
 do
 
-	[[ "$clockstate" = "stopped" ]] && { trace e "Clock not started, please start the clock" ; continue ; }
 	echo "gameday $action"
 
 	# process the single characters	
