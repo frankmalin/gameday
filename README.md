@@ -1,7 +1,7 @@
 
 # Med City FC -- Game Day
  
-![alt text](https://github.com/frankmalin/gameday/blob/development/image/Med%20City%20FC.png "Med City FC")
+![alt text](https://github.com/frankmalin/gameday/blob/master/image/Med%20City%20FC.png "Med City FC")
 
 
 Game day is used for the MedCityFC soccer team to keep track of scoring.  
