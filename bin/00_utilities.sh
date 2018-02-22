@@ -130,6 +130,16 @@ function buildevent()
 	echo $event: $what @$time
 }
 
+function buildevent()
+{
+	# Build an event for logging
+	local event=$1
+	local time=$2
+	local what="$3"
+
+	echo $event: $what @$time
+}
+
 function gettime()
 {
 	egrep $timestr $timefile | cut -f2 -d:
