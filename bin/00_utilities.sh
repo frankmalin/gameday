@@ -52,10 +52,7 @@ function trace()
 		*) tracetype="[$1]"
 	esac; shift
 	## Get trace information and formatting
-	local functionname=${FUNCNAME[1]}
-	tabcount=${#FUNCNAME[@]}
-	for i in `seq 3 $tabcount`; do echo -n -e "\t" >>$log/ALL.log; done
-	echo -e "$tracetype `echo $0 | rev | cut -f1 -d/ | rev` $functionname $@" >> $log/ALL.log
+	echo -e "$tracetype\t`echo $0 | rev | cut -f1 -d/ | rev`\t`echo ${FUNCNAME[@]} | cut -f3- -d' ' | tr ' ' '\n' | xargs -i echo -n -e '\t{}' | tr -d  [:alnum:]`${FUNCNAME[1]} $@">> $log/ALL.log
 	echo $@ >> $log/`echo $tracetype | cut -f2 -d'[' | cut -f1 -d']'`.log
 	[[ "$tracetype" = "ERROR" ]] && echo -e "$tracetype `echo $0 | rev | cut -f1 -d/ | rev` $functionname $@"
 }
@@ -115,11 +112,23 @@ function settime()
 		;;
 		h) m="Halftime"
 		;;
+		e) m="Final"
+		;;
 		*) trace E "Invalid option: $whichtime"
 	esac
         echo $timestr$m > $timefile
 	echo $halfstr$whichtime >> $timefile
 	[[ $whichtime = "1" || $whichtime = "2" ]] && $bpath/99_timer.sh & # batch out the time
+}
+
+function buildevent()
+{
+	# Build an event for logging
+	local event=$1
+	local time=$2
+	local what="$3"
+
+	echo $event: $what @$time
 }
 
 function gettime()
@@ -243,15 +252,19 @@ function updateTeamMinutes()
 function playerlock()
 {
 	trace e
+	local lockPid="X"
+	local lockCount=0
 	while true
 	do
 		if mkdir $data/playerlock ; then
-			trace i "Player daatabase LOCKED"
+			trace i "Player database LOCKED : $BASHPID"
+			touch $data/playerlock/$BASHPID
 			break; # lock the entire player data
 		else
-			# TODO should add a kill here
-			trace i "player database lock WAIT"
+			trace i "pid : $BASHPID, waiting ($lockCount) on player database lock: `ls -1 $data/playerlock/`"
+			[[ "`ls -1 $data/playerlock/`" = "$lockPid" ]] && let lockCount+=1 || { lockCount=0 ; lockPid=`ls -1 $data/playerlock/` ; }
 			sleep 1 # player lock sleep
+			[[ $lockCount -gt 100 ]] && rm -rf $data/playerlock
 		fi
 	done
 	trace x
@@ -259,7 +272,8 @@ function playerlock()
 
 function playerunlock()
 {
-	trace e
+	trace e 
+	trace i "Player database UNLOCKED : $BASHPID"
 	rm -rf $data/playerlock # free up the lock for others
 	trace x
 }
@@ -301,6 +315,7 @@ function playerwrite()
 	trace e
 	local line="\t$pstatus\t$pnum\t$pname\t$pg\t$pm\t$psi\t$pso\t$py\t$pyr\t$pr\t$prr"
 	trace d $line
+	[[ -z "$pindex" || -z "pnum" ]] && { trace E "Player index not set" ; return ; }
         sed -i "${pindex}s/.*/$line/" $pfile
 	playerunlock
 	trace x

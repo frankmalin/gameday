@@ -7,7 +7,6 @@
 #
 . `dirname $0`/00_utilities.sh
 # This is only for unit test
-#set -x
 trace e
 testmode=""
 [[ -e "$timefile" ]] || { writetime $1 $2 ; testmode=true ; } # this should only be executed for test, starting with 1 min, first 1/2
@@ -34,8 +33,8 @@ do
 		sleeptime=$dsleep # change back to the default seelp time
 	fi
 	# TODO This need to know if it is first or second half because the second half check always fails the greater than 45
-	[[ `echo $lasttime|tr -d '+'` -eq 45 && `gethalf` = "1" ]] && { writetime "45+" $halftime; } # end the first half
-	[[ `echo $lasttime|tr -d '+'` -eq 90 && `gethalf` = "2" ]] && { writetime "90+" $halftime; } # end the second half
+	[[ `echo $lasttime|tr -d '+'` -eq 45 && `gethalf` = "1" ]] && { lasttime=45+ ; writetime $lasttime $halftime; } # end the first half
+	[[ `echo $lasttime|tr -d '+'` -eq 90 && `gethalf` = "2" ]] && { lasttime=90+ ; writetime $lasttime $halftime; } # end the second half
 	[[ "`echo $lasttime | cut -c3`" != "+" ]] && let lasttime+=1 || let extratime+=1 # increment the clock
 	writetime $lasttime $halftime
 	# Call to make the updates for the minute update, as well as the publish of the data
