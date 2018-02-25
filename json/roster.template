@@ -1,0 +1,12 @@
+		{
+		"number": "@@pnum@@",
+		"name": "@@pname@@",
+		"roster": "@@roster@@",
+		"current": "@@pstatus@@",
+		"minutes" : "@@pm@@",
+		"goals": [
+			@@goals@@
+		],
+		"yellow": "@@py@@",
+		"red": "@@pr@@"
+		},

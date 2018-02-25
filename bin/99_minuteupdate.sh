@@ -2,7 +2,7 @@
 #
 # this will be called every minute to produce some form of an update
 #
-#set -x
+set -x
 . `dirname $0`/00_utilities.sh
 
 . $currentgame
@@ -44,19 +44,20 @@ function updateTeamScoreBoard()
 	trace e
 	# Update the team portion of the index
 	local teamP=$1
+	local whichboard=$2
 	local scoreboard=""
 	local line=""
 	local name=""
 	local value=""
 	[[ $teamP = "h" ]] && scoreboard=$homescoreboard || scoreboard=$awayscoreboard
 
-	sed -i "s/@@MINUTE@@/`gettime`/g" $html/index.html
+	sed -i "s/@@MINUTE@@/`gettime`/g" $whichboard
 
 	cat $scoreboard | while read line
 	do
 		name=`echo $line | cut -f1 -d':'`
 		value=`echo $line | cut -f2- -d':'`
-		sed -i "s#@@${teamP}_${name}@@#$value#g" $html/index.html
+		sed -i "s#@@${teamP}_${name}@@#$value#g" $whichboard
 	done
 	trace x
 }
@@ -64,8 +65,11 @@ function updateScoreBoard()
 {
 	trace e
 	cp $html/index.template $html/index.html
-	updateTeamScoreBoard h
-	updateTeamScoreBoard a
+	updateTeamScoreBoard h $html/index.html
+	updateTeamScoreBoard a $html/index.html
+	cp $json/scoreboard.template $json/scoreboard.json
+	updateTeamScoreBoard h $json/scoreboard.json
+	updateTeamScoreBoard a $json/scoreboard.json
 	trace x
 }
 
@@ -73,12 +77,23 @@ function updatePlayersHtml()
 {
 	trace e
         # This will update the players list
+	echo > $json/h.json # create the json files
+	echo > $json/a.json
         updatePlayer S h
         updatePlayer S a
         updatePlayer O h
         updatePlayer O a
         updatePlayer R h
         updatePlayer R a
+        updatePlayer N h
+        updatePlayer N a
+	# TODO need to update the files
+	sed -i "`wc -l $json/h.json| cut -f1 -d' '`s/},$/}/" $json/h.json
+        sed -i -e "/@@h_roster@@/r $json/h.json" $json/scoreboard.json
+        sed -i "/@@h_roster@@/d" $json/scoreboard.json
+        sed -i "`wc -l $json/a.json| cut -f1 -d' '`s/},$/}/" $json/a.json
+        sed -i -e "/@@a_roster@@/r $json/a.json" $json/scoreboard.json
+        sed -i "/@@a_roster@@/d" $json/scoreboard.json
 	trace x
 }
 
@@ -86,7 +101,7 @@ function pushTheData()
 {
 	# Prereq aws cli installed on machine	
 	# connection information configured for aws
-	aws s3 cp $html/index.html s3://mfcgameday/currentgame/ --acl public-read
+echo TODO	aws s3 cp $html/index.html s3://mfcgameday/currentgame/ --acl public-read
 }
 
 # Make the call to update the minutes played.

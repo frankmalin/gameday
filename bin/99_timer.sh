@@ -32,15 +32,14 @@ do
 	else
 		sleeptime=$dsleep # change back to the default seelp time
 	fi
-	# TODO This need to know if it is first or second half because the second half check always fails the greater than 45
-	[[ `echo $lasttime|tr -d '+'` -eq 45 && `gethalf` = "1" ]] && { lasttime=45+ ; writetime $lasttime $halftime; } # end the first half
-	[[ `echo $lasttime|tr -d '+'` -eq 90 && `gethalf` = "2" ]] && { lasttime=90+ ; writetime $lasttime $halftime; } # end the second half
-	[[ "`echo $lasttime | cut -c3`" != "+" ]] && let lasttime+=1 || let extratime+=1 # increment the clock
-	writetime $lasttime $halftime
-	# Call to make the updates for the minute update, as well as the publish of the data
-	[[ -z "$testmode" ]] && $bpath/99_minuteupdate.sh &
+	# Adjust the clock as needed
+	# if the clock is in the 45th or 90th minute, we should move it to 45+ and 90+
+	[[ "$lasttime" = "45" || "$lasttime" = "90" ]] && { lasttime="${lasttime}+" ; writetime $lasttime $halftime ; }
+        # update the clock
+	[[ `echo $lasttime | egrep '^[0-9]{1,2}$'` ]] && { let lasttime+=1 ; writetime $lasttime $halftime ;}
+        [[ -z "$testmode" ]] && $bpath/99_minuteupdate.sh &
 	trace i "Minute : $lasttime"
-	[[ $extratime -gt 10 ]] && break
+	[[ "$halftime" = "e" || "$halftime" = "h" ]] && break # The clock should terminate at this time, once the last update has been made above
 done
 trace x
 # We are done updating the clock
