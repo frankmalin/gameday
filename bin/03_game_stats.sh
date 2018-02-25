@@ -156,6 +156,7 @@ do
                         [[ `echo $team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
                         trace v $(buildevent "Yellow Card" `gettime` "$eventD")
+			updateYellow $team $num $reason
                         ;;
 		r) # Red card issued
                         team=`echo $action | cut -c2`
@@ -201,8 +202,8 @@ do
 			;;
 		1) # This is a start of the first half (this will be primed to start maybe)
 			[[ -d $log ]] && mv $log $log-`date | tr ' ' '_' | tr ':' '-'` # start with a fresh set of logs
-                        trace v $(buildevent Time `gettime` "First Half is underway")
 			settime 1 ; clockstate=running
+			trace v $(buildevent Time `gettime` "First Half is underway")	
 			initscoreboards
 			;;
 		T) # This is a test statement to allow for the input to sleep for more input
@@ -210,9 +211,8 @@ do
 			sleep 1m
 			;;
 		E) # Exit
-                        trace v $(buildevent Time `gettime` "End of game")
 			settime e; clockstate=stopped
-			sleep 61 # This should allow the website to update one last time
+			trace v $(buildevent Time `gettime` "End of game")
 			break
 			;;
 		K) # This is really for using in test, to kill the timer

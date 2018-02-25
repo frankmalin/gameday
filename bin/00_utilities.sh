@@ -7,6 +7,7 @@ props=$rpath/properties
 data=$rpath/data
 html=$rpath/html
 log=$rpath/log
+json=$rpath/json
 
 currentgame=$data/gameday.properties
 timefile=$data/timer.properties
@@ -60,7 +61,7 @@ function trace()
 function teamname()
 {
 	local team=$1
-	[[ "$team" = "h" ]] && echo $hometeamname || echo $awayteamname=
+	[[ "$team" = "h" ]] && echo $hometeamname || echo $awayteamname
 	
 }
 
@@ -101,9 +102,6 @@ function settime()
 {
         # this will start the time
         local whichtime=$1
-		
-	# Should see if there is a timer running and kill it 
-	ps -ef | egrep 99_timer.sh | egrep -v grep | tr -s ' ' | cut -f2 -d' ' | xargs -r kill -KILL  # kill any old timers laying around
 
 	case $whichtime in
 		1) m=1
@@ -119,6 +117,7 @@ function settime()
         echo $timestr$m > $timefile
 	echo $halfstr$whichtime >> $timefile
 	[[ $whichtime = "1" || $whichtime = "2" ]] && $bpath/99_timer.sh & # batch out the time
+	# The timer will stop itself
 }
 
 function buildevent()
@@ -227,7 +226,7 @@ function updateTeamMinutes()
 
 	trace e
 	local currenttime=`gettime`
-	if [[ ! "$currenttime" = *"+"* ]] ; then
+	if [[ `echo $currenttime | egrep '^[0-9]{1,2}$'` ]] ; then
 		# Loop thru the players and update the time
 		trace d "`egrep "^\sS\s" $roster | cut -f3`"
 		set `egrep "^\sS\s" $roster | cut -f3`
@@ -295,6 +294,7 @@ function playerread()
 	pindex=`egrep -n "^\s\S\s$number\s" $roster | cut -f1 -d:` # this will find the player and the line number
 	p=`egrep "^\s\S\s$number\s" $roster` 
 	trace i $p
+	proster="R" # TODO add a field here
 	pstatus=`echo $p | tr -s ' ' | cut -f1 -d' '`
 	pnum=`echo $p | tr -s ' ' | cut -f2 -d' '`
 	pname=`echo $p | tr -s ' '| cut -f3 -d' '`
@@ -334,6 +334,7 @@ function updatePlayer()
 	while test $# -gt 0
 	do
 		playerHtmlRecord $rosterP $1 | egrep "playerHtmlRecord:" | cut -f2- -d':'  >> $data/${rosterP}_${whichtable}
+		playerJsonRecord $rosterP $1 
 		shift
 	done 
 	sed -i -e "/@@${rosterP}_${whichtable}@@/r $data/${rosterP}_${whichtable}" $html/index.html
@@ -346,6 +347,7 @@ function playerHtmlRecord()
 	local roster=$1
 	local number=$2
 	trace e $1 $2
+	local returnR=""
 	
 	playerread $roster $number
 	dpname=`echo $pname | tr _ ' '`
@@ -354,6 +356,58 @@ function playerHtmlRecord()
 	playerunlock
 	trace x
 }
+
+function playerJsonRecord()
+{
+        local roster=$1
+        local number=$2
+        trace e $1 $2
+
+	local goalrecord=""
+	local goaltemplate="{\"type\": \"@@type@@\",\"minute\": \"@@goalminute@@\"},"
+
+        playerread $roster $number
+        dpname=`echo $pname | tr _ ' '`
+	if [[ "$pg" != "0" ]] ; then
+		set `echo $pg | tr '_' ' '`
+		while test $# -gt 0 
+		do
+			[[ "`echo $1 | egrep Own`" ]] && type="own" || type="goal"
+			goalminute=`echo $1 | grep -Eo '[0-9]{1,2}'`
+			goalrecord="$goalrecord `echo $goaltemplate | sed "s/@@type@@/$type/g; s/@@goalminute@@/$goalminute/g"` "
+			shift
+		done	
+	fi
+	goalrecord="`echo $goalrecord | rev | cut -c2- | rev`" # remove the last comma on the continuation 
+	local fstatus=""
+	case $pstatus in
+		S) fstatus="PITCH"
+			;;
+		O) fstatus="OUT"
+			;;
+		R) fstatus="ROSTERED"
+			;;
+		N) fstatus="NOTROSTERED"
+			;;
+		*) trace E "Unknown status: $pstatus"
+	esac
+	local rstatus=""
+	case $proster in
+		S) rstatus="STARTED"
+			;;
+		R) rstatus="ROSTERED"
+			;;
+		N) rstatus="NOTROSTERED"
+			;;
+		*) trace E "Unknown roster state: $pr"
+	esac
+	local returnR=""
+        returnR=`cat $json/roster.template | sed  "s/@@pnum@@/$pnum/g; s/@@pname@@/$dpname/g; s/@@pg@@/$pg/g; s/@@pm@@/$pm/g; s/@@py@@/$py/g; s/@@pr@@/$pr/g; s/@@pstatus@@/$fstatus/g; s/@@roster@@/$rstatus/g; s/@@goals@@/$goalrecord/g"`
+        echo $returnR >> $json/$roster.json
+        playerunlock
+        trace x
+}
+
 
 function updateGoal()
 {

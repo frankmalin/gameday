@@ -1,0 +1,38 @@
+{
+	"time": "@@MINUTE@@",
+	"home": {
+		"teamname": "@@h_team@@",
+		"goals" : "@@h_goals@@",
+		"shots" : "@@h_shots@@",
+		"saves": "@@h_saves@@",
+		"sog" : "@@h_sog@@",
+		"corners" : "@@h_corners@@",
+		"fouls" : "@@h_fouls@@",
+		"yellow" : "@@h_cautions@@",
+		"red" : "@@h_reds@@"
+	},
+	"visitor": {
+		"teamname": "@@a_team@@",
+                "goals" : "@@a_goals@@",
+                "shots" : "@@a_shots@@",
+		"saves": "@@a_saves@@",
+                "sog" : "@@a_sog@@",
+                "corners" : "@@a_corners@@",
+                "fouls" : "@@a_fouls@@",
+                "yellow" : "@@a_cautions@@",
+                "red" : "@@a_reds@@"
+        },
+
+        "hometeam" : "@@h_team@@",
+	"homeroster": [
+
+@@h_roster@@
+	],
+
+	"visitorteam": "@@a_team@@",
+	"visitorroster": [
+@@a_roster@@
+	]
+
+}
+
