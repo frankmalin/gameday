@@ -221,7 +221,7 @@ function update()
 function updateMinutesPlayed()
 {
 	updateTeamMinutes h
-	updateTeamMinutes a
+	updateTeamMinutes v
 }
 
 function updateTeamMinutes() 
