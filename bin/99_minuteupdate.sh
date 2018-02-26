@@ -66,10 +66,10 @@ function updateScoreBoard()
 	trace e
 	cp $html/index.template $html/index.html
 	updateTeamScoreBoard h $html/index.html
-	updateTeamScoreBoard a $html/index.html
+	updateTeamScoreBoard v $html/index.html
 	cp $json/scoreboard.template $json/scoreboard.json
 	updateTeamScoreBoard h $json/scoreboard.json
-	updateTeamScoreBoard a $json/scoreboard.json
+	updateTeamScoreBoard v $json/scoreboard.json
 	trace x
 }
 
@@ -78,22 +78,22 @@ function updatePlayersHtml()
 	trace e
         # This will update the players list
 	echo > $json/h.json # create the json files
-	echo > $json/a.json
+	echo > $json/v.json
         updatePlayer S h
-        updatePlayer S a
+        updatePlayer S v
         updatePlayer O h
-        updatePlayer O a
+        updatePlayer O v
         updatePlayer R h
-        updatePlayer R a
+        updatePlayer R v
         updatePlayer N h
-        updatePlayer N a
+        updatePlayer N v
 	# TODO need to update the files
 	sed -i "`wc -l $json/h.json| cut -f1 -d' '`s/},$/}/" $json/h.json
         sed -i -e "/@@h_roster@@/r $json/h.json" $json/scoreboard.json
         sed -i "/@@h_roster@@/d" $json/scoreboard.json
-        sed -i "`wc -l $json/a.json| cut -f1 -d' '`s/},$/}/" $json/a.json
-        sed -i -e "/@@a_roster@@/r $json/a.json" $json/scoreboard.json
-        sed -i "/@@a_roster@@/d" $json/scoreboard.json
+        sed -i "`wc -l $json/v.json| cut -f1 -d' '`s/},$/}/" $json/v.json
+        sed -i -e "/@@v_roster@@/r $json/v.json" $json/scoreboard.json
+        sed -i "/@@v_roster@@/d" $json/scoreboard.json
 	trace x
 }
 

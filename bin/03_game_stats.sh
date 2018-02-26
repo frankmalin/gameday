@@ -99,7 +99,7 @@ do
                         ;;
 		g) # There was a goal scored
 			team=`echo $action | cut -c2`
-			[[ `echo $team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+			[[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
 			num=`echo $action | cut -c3-`
 			[[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
 			eventD="`teamname $team`, $num `playername $team $num`"
@@ -108,7 +108,7 @@ do
 			;;
                 a) # There was an assist 
                         team=`echo $action | cut -c2`   
-                        [[ `echo $team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         num=`echo $action | cut -c3-`   
                         [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
 			eventD="`teamname $team`, $num, `playername $team $num`"
@@ -117,7 +117,7 @@ do
 			;;
                O) # Own goal, but it will go against the home or away team
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         num=`echo $action | cut -c3-`
                         [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
@@ -126,7 +126,7 @@ do
                         ;;
 		i) # This is a sub in
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         num=`echo $action | cut -c3-`
                         [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
@@ -135,7 +135,7 @@ do
                         ;;
                 o) # This is a sub out 
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         num=`echo $action | cut -c3-`
                         [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
@@ -144,16 +144,16 @@ do
                        ;;
 		f) #  foul
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         eventD="`teamname $team`"
                         trace v $(buildevent Foul `gettime` "$eventD")
 			update $team fouls
 			;;
 		y) # Yellow card issued
                         team=`echo $action | cut -c2`
-                        num=`echo $action | cut -c3- | rev | cut -c2- | rev`
+			num=`echo $action | grep -Eo '[0-9]{1,2}'`
 			reason=`echo $action | rev | cut -c1 | rev`
-                        [[ `echo $team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
                         trace v $(buildevent "Yellow Card" `gettime` "$eventD")
 			updateYellow $team $num $reason
@@ -162,7 +162,7 @@ do
                         team=`echo $action | cut -c2`
                         num=`echo $action | cut -c3- | rev | cut -c2- | rev`
                         reason=`echo $action | rev | cut -c1 | rev`
-                        [[ `echo $team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
                         trace v $(buildevent "Red Card" `gettime` "$eventD")
 			updateRed $team $num $reason
@@ -170,21 +170,21 @@ do
 
 		c) # Corner kick
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         eventD="`teamname $team`"
                         trace v $(buildevent "Corner Kick" `gettime` "$eventD")
 			update $team corners
 			;;
 		s) # shot near net
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         eventD="`teamname $team`"
                         trace v $(buildevent "Shot wide" `gettime` "$eventD")
 			update $team shots
 			;;
 		S) # Shot on frame and a save
                         team=`echo $action | cut -c2`
-                        [[ `echo team | egrep "h|a"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         eventD="`teamname $team`"
                         trace v $(buildevent "Shot On" `gettime` "$eventD")
 			eventD="$(teamname `otherteam $team`)"
