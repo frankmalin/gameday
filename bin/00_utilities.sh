@@ -55,13 +55,13 @@ function trace()
 	## Get trace information and formatting
 	echo -e "$tracetype\t`echo $0 | rev | cut -f1 -d/ | rev`\t`echo ${FUNCNAME[@]} | cut -f3- -d' ' | tr ' ' '\n' | xargs -i echo -n -e '\t{}' | tr -d  [:alnum:]`${FUNCNAME[1]} $@">> $log/ALL.log
 	echo $@ >> $log/`echo $tracetype | cut -f2 -d'[' | cut -f1 -d']'`.log
-	[[ "$tracetype" = "ERROR" ]] && echo -e "$tracetype `echo $0 | rev | cut -f1 -d/ | rev` $functionname $@"
+	[[ "$inTrace" = "E" ]] && echo -e "$tracetype `echo $0 | rev | cut -f1 -d/ | rev` $functionname $@"
 }
 
 function teamname()
 {
 	local team=$1
-	[[ "$team" = "h" ]] && echo $hometeamname || echo $awayteamname
+	[[ "$team" = "h" ]] && echo $hometeamname || echo $visitorteamname
 	
 }
 
@@ -70,7 +70,7 @@ function playername()
 	local team=$1
 	local num=$2
 	local roster=""
-	[[ "$team" = "h" ]] && roster=$homeroster || roster=$awayroster
+	[[ "$team" = "h" ]] && roster=$homeroster || roster=$visitorroster
 	egrep "^\s.\s$num\s" $roster | cut -f4 | tr '_' ' '
 }
 
@@ -93,7 +93,7 @@ function fromlink()
 
 function otherteam()
 {
-	[[ "$1" = "h" ]] && echo "a" || echo "h"
+	[[ "$1" = "h" ]] && echo "v" || echo "h"
 }
 
 timestr="time:"
@@ -116,8 +116,7 @@ function settime()
 	esac
         echo $timestr$m > $timefile
 	echo $halfstr$whichtime >> $timefile
-	[[ $whichtime = "1" || $whichtime = "2" ]] && $bpath/99_timer.sh & # batch out the time
-	# The timer will stop itself
+	[[ $whichtime = "1" || $whichtime = "2" ]] &&  $bpath/99_timer.sh &  
 }
 
 function buildevent()
@@ -197,7 +196,7 @@ function initeach()
 function initscoreboards()
 {
 	initeach $homescoreboard $hometeamname $hometeamlogo
-	initeach $awayscoreboard $awayteamname $awayteamlogo
+	initeach $visitorscoreboard $visitorteamname $visitorteamlogo
 }
 
 function update()
@@ -206,7 +205,7 @@ function update()
 	local attribute=$2
 	local scoreboard=${team}scoreboard
 	trace e $2
-	[[ "$team" = "h" ]] && scoreboard=$homescoreboard || scoreboard=$awayscoreboard
+	[[ "$team" = "h" ]] && scoreboard=$homescoreboard || scoreboard=$visitorscoreboard
 
 	local linenum=`egrep -n "$attribute:" $scoreboard | cut -f1 -d':'` || { trace E "Missing scoreboard attribute: $attribute" ; return 1 ; }
 
@@ -232,7 +231,7 @@ function updateTeamMinutes()
 	local num=""
 	local roster=""
 
-        [[ "$rosterP" = "h" ]] && roster=$homeroster || roster=$awayroster
+        [[ "$rosterP" = "h" ]] && roster=$homeroster || roster=$visitorroster
 
 	trace e
 	local currenttime=`gettime`
@@ -297,7 +296,7 @@ function playerread()
 	local number=$2
 
 	local roster=""
-	[[ "$rosterP" = "h" ]] && roster=$homeroster || roster=$awayroster
+	[[ "$rosterP" = "h" ]] && roster=$homeroster || roster=$visitorroster
 
 	# This will pull the player record from the roster with all the current information
 	pfile=$roster
@@ -337,7 +336,7 @@ function updatePlayer()
 	local rosterP=$2
 	local whichtable=$1
 	shift; shift
-	[[ $rosterP = "h" ]] && roster=$homeroster || roster=$awayroster
+	[[ $rosterP = "h" ]] && roster=$homeroster || roster=$visitorroster
 	echo "<!-- begin roster $rosterP for $whichtable -->" > $data/${rosterP}_${whichtable}
 	trace d  "egrep "^\s$whichtable\s" $roster  `egrep "^\s$whichtable\s" $roster | cut -f3`"
 	[[ `egrep "^\s$whichtable\s" $roster` ]] && set `egrep "^\s$whichtable\s" $roster | cut -f3`
@@ -463,7 +462,7 @@ function updateYellow()
         local timeof=$3
 	local reason=$4
         playerread $roster $number
-	py=$timeof
+	py="@$timeof"
 	pyr=$reason
 	playerwrite
 	# Need the mapping to H or A
@@ -475,8 +474,8 @@ function updateRed()
         local number=$2
         local timeof=$3
         local reason=$4
-        platerread $roster $number
-        pr=$timeof
+        playerread $roster $number
+        pr="@$timeof"
         prr=$reason
         playerwrite
 	# need mapping to H or A

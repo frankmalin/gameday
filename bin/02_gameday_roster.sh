@@ -3,7 +3,7 @@
 # This is used to show
 #
 
-# map the home and away parameter to the correct team roster
+# map the home and visitor parameter to the correct team roster
 #set -x
 . `dirname $0`/00_utilities.sh
 
@@ -47,19 +47,19 @@ state=""
 
 while test $# -gt 0; do
 	[[ $1 =~ ^-h|--home$ ]] && { team=home ; shift 1 ; continue ; };
-	[[ $1 =~ ^-a|--away$ ]] && { team=away ; shift 1 ; continue ; };
+	[[ $1 =~ ^-a|--visitor$ ]] && { team=visitor ; shift 1 ; continue ; };
 	[[ $1 =~ ^-r|--roster$ ]] && { state="roster"; shift 1; continue; };
         [[ $1 =~ ^-s|--start$ ]] && { state="start" ; shift 1; continue; };
 	[[ "$state" = "roster" ]] && rosternums="$rosternums $1" || starternums="$starternums $1"
 	shift
 done
 
-[[ -z "$team" ]] && { echo Need to set--home or --away ; exit 1 ; } 
+[[ -z "$team" ]] && { echo Need to set--home or --visitor ; exit 1 ; } 
 
 echo r: $rosternums
 echo s: $starternums
 
-[[ "$team" = "home" ]] && roster=$homeroster || roster=$awayroster
+[[ "$team" = "home" ]] && roster=$homeroster || roster=$visitorroster
 
 # Process the stating numbers
 

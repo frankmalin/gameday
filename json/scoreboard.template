@@ -12,15 +12,15 @@
 		"red" : "@@h_reds@@"
 	},
 	"visitor": {
-		"teamname": "@@a_team@@",
-                "goals" : "@@a_goals@@",
-                "shots" : "@@a_shots@@",
-		"saves": "@@a_saves@@",
-                "sog" : "@@a_sog@@",
-                "corners" : "@@a_corners@@",
-                "fouls" : "@@a_fouls@@",
-                "yellow" : "@@a_cautions@@",
-                "red" : "@@a_reds@@"
+		"teamname": "@@v_team@@",
+                "goals" : "@@v_goals@@",
+                "shots" : "@@v_shots@@",
+		"saves": "@@v_saves@@",
+                "sog" : "@@v_sog@@",
+                "corners" : "@@v_corners@@",
+                "fouls" : "@@v_fouls@@",
+                "yellow" : "@@v_cautions@@",
+                "red" : "@@v_reds@@"
         },
 
         "hometeam" : "@@h_team@@",
@@ -29,9 +29,9 @@
 @@h_roster@@
 	],
 
-	"visitorteam": "@@a_team@@",
+	"visitorteam": "@@v_team@@",
 	"visitorroster": [
-@@a_roster@@
+@@v_roster@@
 	]
 
 }

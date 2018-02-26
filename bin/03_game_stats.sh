@@ -115,7 +115,7 @@ do
 			trace v $(buildevent Assist `gettime` "$eventD")
 			assist $team $num `gettime`
 			;;
-               O) # Own goal, but it will go against the home or away team
+               O) # Own goal, but it will go against the home or visitor team
                         team=`echo $action | cut -c2`
                         [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         num=`echo $action | cut -c3-`
@@ -156,7 +156,7 @@ do
                         [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
                         trace v $(buildevent "Yellow Card" `gettime` "$eventD")
-			updateYellow $team $num $reason
+			updateYellow $team $num `gettime` $reason
                         ;;
 		r) # Red card issued
                         team=`echo $action | cut -c2`
@@ -165,7 +165,7 @@ do
                         [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
                         trace v $(buildevent "Red Card" `gettime` "$eventD")
-			updateRed $team $num $reason
+			updateRed $team $num `gettime` $reason
                         ;;
 
 		c) # Corner kick
@@ -184,7 +184,7 @@ do
 			;;
 		S) # Shot on frame and a save
                         team=`echo $action | cut -c2`
-                        [[ `echo team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
                         eventD="`teamname $team`"
                         trace v $(buildevent "Shot On" `gettime` "$eventD")
 			eventD="$(teamname `otherteam $team`)"
@@ -226,7 +226,7 @@ do
 		*) 
 			trace i "Unknown option: $single"
 		esac
-        [[ "$clockstate" = "stopped" ]] && { trace e "Clock is not running please start the clock" ; }
+        [[ "$clockstate" = "stopped" ]] && { trace E "Clock is not running please start the clock" ; }
 	echo -n "GAME DAY> " # Echo the prompt
 done
 

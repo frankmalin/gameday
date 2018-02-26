@@ -24,8 +24,8 @@ td {
 		<col width="110">
 		<col width="110">
 		<th colspan="2">Minute @@MINUTE@@</th>
-		<tr><TD>@@h_team@@</TD><TD>@@a_team@@</TD></TR>
-               <TR><TD>@@h_goals@@</TD><TD>@@a_goals@@</TD></TR>
+		<tr><TD>@@h_team@@</TD><TD>@@v_team@@</TD></TR>
+               <TR><TD>@@h_goals@@</TD><TD>@@v_goals@@</TD></TR>
     	</TABLE>
     	<TABLE WIDTH="240"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <!-- I think that this is a table row -->
@@ -33,17 +33,17 @@ td {
                 <col width="120">
                 <col width="50">
 		<th colspan="3">Game stats</th>
-    		<tr> <TD>@@h_sog@@</TD><TD>SOG</TD><TD>@@a_sog@@</TD></TD><TR>
-		<tr> <TD>@@h_saves@@</TD><TD>Saves</TD><TD>@@a_saves@@</TD></TD><TR>
-                <tr> <TD>@@h_shots@@</TD><TD>Shots</TD><TD>@@a_shots@@</TD></TD><TR>
-		<tr> <TD>@@h_corners@@</TD><TD>Corner</TD><TD>@@a_corners@@</TD></TD><TR>
-		<tr> <TD>@@h_fouls@@</TD><TD>Fouls</TD><TD>@@a_fouls@@</TD></TD><TR>
-		<tr> <TD>@@h_cautions@@</TD><TD>Yellow</TD><TD>@@a_cautions@@</TD></TD><TR>
-		<tr> <TD>@@h_reds@@</TD><TD>Red</TD><TD>@@a_reds@@</TD></TD><TR>
+    		<tr> <TD>@@h_sog@@</TD><TD>SOG</TD><TD>@@v_sog@@</TD></TD><TR>
+		<tr> <TD>@@h_saves@@</TD><TD>Saves</TD><TD>@@v_saves@@</TD></TD><TR>
+                <tr> <TD>@@h_shots@@</TD><TD>Shots</TD><TD>@@v_shots@@</TD></TD><TR>
+		<tr> <TD>@@h_corners@@</TD><TD>Corner</TD><TD>@@v_corners@@</TD></TD><TR>
+		<tr> <TD>@@h_fouls@@</TD><TD>Fouls</TD><TD>@@v_fouls@@</TD></TD><TR>
+		<tr> <TD>@@h_cautions@@</TD><TD>Yellow</TD><TD>@@v_cautions@@</TD></TD><TR>
+		<tr> <TD>@@h_reds@@</TD><TD>Red</TD><TD>@@v_reds@@</TD></TD><TR>
 
 	</table>
     </TD>
-    <TD> <img src="@@a_logo@@" alt="" border=3 height=300 width=300></img> </TD>
+    <TD> <img src="@@v_logo@@" alt="" border=3 height=300 width=300></img> </TD>
     </TABLE> 
 
 <!-- This is the scrollable events -->
@@ -69,7 +69,7 @@ td {
 	        <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <th colspan="6" > On Pitch</th>
 <tr><th>Red</th><th>caution</th><th>Min</th><th>Goal@min</th><th>Name</th><th>Num</th><tr>
-@@a_S@@
+@@v_S@@
 		</TABLE>
 	</TD>
 </table>
@@ -88,7 +88,7 @@ td {
                 <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <th colspan="6" > Sub Out</th>
 <tr><th>Red</th><th>caution</th><th>Min</th><th>Goal@min</th><th>Name</th><th>Num</th><tr>
-@@a_O@@
+@@v_O@@
                 </TABLE>
         </TD>
 </table>
@@ -106,7 +106,7 @@ td {
                 <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <th colspan="6" > Reserves</th>
 <tr><th>Red</th><th>caution</th><th>Min</th><th>Goal@min</th><th>Name</th><th>Num</th><tr>
-@@a_R@@
+@@v_R@@
                 </TABLE>
         </TD>
 </table>
