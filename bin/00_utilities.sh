@@ -27,6 +27,7 @@ py=""
 pyr=""
 pr=""
 prr=""
+pss=""
 
 
 
@@ -315,6 +316,7 @@ function playerread()
 	pyr=`echo $p | tr -s ' '| cut -f9 -d' '`
 	pr=`echo $p | tr -s ' '| cut -f10 -d' '`
 	prr=`echo $p | tr -s ' '| cut -f11 -d' '`
+	pss=`echo $p | tr -s ' '| cut -f12 -d' '` # start status
 trace d "$pstatus $pnum $pname $pg $pm ..."
 	trace x
 }
@@ -322,7 +324,7 @@ trace d "$pstatus $pnum $pname $pg $pm ..."
 function playerwrite()
 {
 	trace e
-	local line="\t$pstatus\t$pnum\t$pname\t$pg\t$pm\t$psi\t$pso\t$py\t$pyr\t$pr\t$prr"
+	local line="\t$pstatus\t$pnum\t$pname\t$pg\t$pm\t$psi\t$pso\t$py\t$pyr\t$pr\t$prr\t$pss"
 	trace d $line
 	[[ -z "$pindex" || -z "pnum" ]] && { trace E "Player index not set" ; return ; }
         sed -i "${pindex}s/.*/$line/" $pfile
@@ -401,7 +403,7 @@ function playerJsonRecord()
 		*) trace E "Unknown status: $pstatus"
 	esac
 	local rstatus=""
-	case $proster in
+	case $pss in
 		S) rstatus="STARTED"
 			;;
 		R) rstatus="ROSTERED"
