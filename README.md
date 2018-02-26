@@ -11,6 +11,10 @@ The intent of game day is to
 
  - Provide information required by the [league](http://npsl.bonzidev.com/teams ) of all the players on the team.
 
+## game day sample output
+ - [ html output ](https://s3.us-east-2.amazonaws.com/mfcgameday/currentgame/index.html)
+ - [ json output ](https://s3.us-east-2.amazonaws.com/mfcgameday/currentgame/scoreboard.json)  
+
 ## for each game
  - Provide real time scoring
    - this could be accessed on the web

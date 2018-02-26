@@ -2,7 +2,7 @@
 #
 # this will be called every minute to produce some form of an update
 #
-set -x
+#set -x
 . `dirname $0`/00_utilities.sh
 
 . $currentgame
@@ -31,7 +31,7 @@ function updateEventLog()
 		[[ "$what" = "Time" ]] && { echo $c | sed "s/@@MINUTE@@/$whodid/g" >> $html/event.html ; continue ; }
 		[[ "$lastlog" != "$logtime" ]] && { echo $c | sed "s/@@MINUTE@@/$logtime/g" >> $html/event.html ; lastlog=$logtime ; }
 		[[ `echo $whodid | egrep $hometeamname` ]] && { echo $h | sed "s/@@h_event@@/$what: $whodid/g" >> $html/event.html ; continue ; }
-       	 	[[ `echo $whodid | egrep $awayteamname` ]] && { echo $v | sed "s/@@v_event@@/$what: $whodid/g" >> $html/event.html ; continue ; }
+       	 	[[ `echo $whodid | egrep $visitorteamname` ]] && { echo $v | sed "s/@@v_event@@/$what: $whodid/g" >> $html/event.html ; continue ; }
 		echo $c | sed "s/@@MINUTE@@/?? $whodid ??/g" >> $html/event.html 
 	done
 
@@ -49,7 +49,7 @@ function updateTeamScoreBoard()
 	local line=""
 	local name=""
 	local value=""
-	[[ $teamP = "h" ]] && scoreboard=$homescoreboard || scoreboard=$awayscoreboard
+	[[ $teamP = "h" ]] && scoreboard=$homescoreboard || scoreboard=$visitorscoreboard
 
 	sed -i "s/@@MINUTE@@/`gettime`/g" $whichboard
 

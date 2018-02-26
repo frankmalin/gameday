@@ -62,31 +62,42 @@ function buildRoster()
 
 }
 
+function validateRoster()
+{
+	trace e
+	# At the end, we expect a number, and name separated by tabs, the space in name have been replaced by _
+	egrep -v '^\s[0-9]{1,2}\s[[:alpha:]_-]{1,40}$' $1
+	[[ $? -eq 0 ]] && { trace E "$1 not all valid, see previous output" ; } || { trace i "input valid" ; }
+	trace x
+}
+
 home=""
-away=""
+visitor=""
 homeroster=""
-awayroster=""
+visitorroster=""
+
+trace e
 
 process_args $@
 
-[[ -z "$home" || -z "$away" ]] && { echo need to provide a --home and --away parameter with values ; exit 1 ; }
+[[ -z "$home" || -z "$visitor" ]] && { echo need to provide a --home and --visitor parameter with values ; exit 1 ; }
 
 homelink=`findTeamBonziLink $home | egrep "findTeamBonziLink:" | cut -f2- -d:`
-awaylink=`findTeamBonziLink $away | egrep "findTeamBonziLink:" | cut -f2- -d:`
+visitorlink=`findTeamBonziLink $visitor | egrep "findTeamBonziLink:" | cut -f2- -d:`
 
 hometeamlogo=`findTeamLogo $home | egrep "findTeamLogo:" | cut -f2- -d: | tr -d ' '`
-awayteamlogo=`findTeamLogo $away | egrep "findTeamLogo:" | cut -f2- -d: | tr -d ' '`
+visitorteamlogo=`findTeamLogo $visitor | egrep "findTeamLogo:" | cut -f2- -d: | tr -d ' '`
 
 
 hometeamname=`echo $hometeamlogo | rev | cut -f1 -d'/' | rev | cut -f2- -d'_' | cut -f1 -d'.'`
-awayteamname=`echo $awayteamlogo | rev | cut -f1 -d'/' | rev | cut -f2- -d'_' | cut -f1 -d'.'`
+visitorteamname=`echo $visitorteamlogo | rev | cut -f1 -d'/' | rev | cut -f2- -d'_' | cut -f1 -d'.'`
 
 # TODO change to the call above for the real links
 homelink=http://medcityfc.bonzidev.com/sam/teams/index.php?team=3433240
-awaylink=http://vsltfc.bonzidev.com/sam/teams/index.php?team=3426140 
+visitorlink=http://vsltfc.bonzidev.com/sam/teams/index.php?team=3426140 
 
 hometeam=`fromlink $homelink`
-awayteam=`fromlink $awaylink`
+visitorteam=`fromlink $visitorlink`
 
 rm $currentgame # this should be the first writes to te file
 
@@ -96,26 +107,29 @@ echo "export baseimagelink=https://s3.us-east-2.amazonaws.com$baseimage" >> $cur
 
 
 echo "export hometeamname=\"$hometeamname\"" >> $currentgame
-echo "export awayteamname=\"$awayteamname\"" >> $currentgame
+echo "export visitorteamname=\"$visitorteamname\"" >> $currentgame
 
 echo "export hometeamlogo=$hometeamlogo" >> $currentgame
-echo "export awayteamlogo=$awayteamlogo" >> $currentgame
+echo "export visitorteamlogo=$visitorteamlogo" >> $currentgame
 
 echo "export hometeam=$hometeam" >> $currentgame
-echo "export awayteam=$awayteam" >> $currentgame
+echo "export visitorteam=$visitorteam" >> $currentgame
 
 homeroster=$data/$hometeam.roster
-awayroster=$data/$awayteam.roster
+visitorroster=$data/$visitorteam.roster
 echo "export homeroster=$data/$hometeam.roster" >> $currentgame
-echo "export awayroster=$data/$awayteam.roster" >> $currentgame
+echo "export visitorroster=$data/$visitorteam.roster" >> $currentgame
 
 echo "export homescoreboard=$data/$hometeam.scoreboard" >> $currentgame
-echo "export awayscoreboard=$data/$awayteam.scoreboard" >> $currentgame
+echo "export visitorscoreboard=$data/$visitorteam.scoreboard" >> $currentgame
 
 [[ -e "$homeroster" ]] && mv $homeroster $homeroster-`datestamp`
-[[ -e "$awayroster" ]] && mv $awayroster $awayroster-`datestamp`
+[[ -e "$visitorroster" ]] && mv $visitorroster $visitorroster-`datestamp`
 
 buildRoster $homelink $homeroster
-buildRoster $awaylink $awayroster
+buildRoster $visitorlink $visitorroster
 
-# Need to feed this into a web page to allow selection of starters
+validateRoster $homeroster
+validateRoster $visitorroster
+
+trace x
