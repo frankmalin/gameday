@@ -32,6 +32,9 @@
 	"visitorteam": "@@v_team@@",
 	"visitorroster": [
 @@v_roster@@
+	],
+	"events": [
+@@events@@
 	]
 
 }

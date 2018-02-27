@@ -17,16 +17,21 @@ function updateEventLog()
 	local v='<DIV ALIGN="RIGHT">@@v_event@@</DIV>'
 	local h='<DIV ALIGN="LEFT">@@h_event@@</DIV>'
 
+	local eventjson="{ \"minute\": \"@@MINUTE@@\", \"event\": \"@@event@@\", \"info\": \"@@info@@\" },"
+
 # Process the events
 	egrep -n "." $eventlog | sort -k1nr -t':' | cut -f2- -d':' > $goltneve
 
 	local logtime=0
 	echo "<!-- Event Log -->" > $html/event.html
+	echo > $json/event.json
 	cat $goltneve | while read event
 	do
 		what=`echo $event | cut -f1 -d:`
 		logtime=`echo $event | cut -f2 -d'@'`
 		whodid=`echo $event | cut -f2- -d: | cut -f1 -d'@'`
+		# format the json record
+		echo $eventjson | sed "s/@@MINUTE@@/$logtime/; s/@@event@@/$what/; s/@@info@@/$whodid/" >> $json/event.json
 		# Cut the minute to see if it has been updated
 		[[ "$what" = "Time" ]] && { echo $c | sed "s/@@MINUTE@@/$whodid/g" >> $html/event.html ; continue ; }
 		[[ "$lastlog" != "$logtime" ]] && { echo $c | sed "s/@@MINUTE@@/$logtime/g" >> $html/event.html ; lastlog=$logtime ; }
@@ -37,6 +42,11 @@ function updateEventLog()
 
 	sed -i -e "/@@events@@/r $html/event.html" $html/index.html
         sed -i "/@@events@@/d" $html/index.html
+
+	sed -i "`wc -l $json/event.json| cut -f1 -d' '`s/},$/}/" $json/event.json
+        sed -i -e "/@@events@@/r $json/event.json" $json/scoreboard.json
+        sed -i "/@@events@@/d" $json/scoreboard.json
+
 }
 
 function updateTeamScoreBoard() 
