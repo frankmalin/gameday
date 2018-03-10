@@ -1,0 +1,48 @@
+<!-- This is the game day format -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body  {
+    background-image: url("https://s3.us-east-2.amazonaws.com/mfcgameday/images/mc.png");
+    background-repeat: repeat;
+    background-attachment: fixed;
+    
+}
+td {
+  text-align: center;
+  vertical-align: middle;
+}
+</style>
+</head>
+
+<body>
+<b>@@DATE@@:  @@h_team@@ vs @@v_team@@</b>
+<br>
+<br>
+<b>@@h_team@@</b> : @@h_goals@@ <b>Goals</b> <mark>@@h_cautions@@</mark> <b>Cautions</b> <font color="red">@@h_reds@@</font> <b>Send Off</b>
+<br>
+<br>
+<TABLE WIDTH="240"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="left">
+	<tr><th>Num </th><th>Name </th><th>Not Rostered </th><th>Started </th><th>Reserved </th><th>Minutes player </th><th>Sub In </th><th>Sub Out </th><th>Goal </th><th>Caution </th><th>Caution Min </th><th>Send Off </th><th> Send Off Minute </th></tr>
+
+@@h_TEAMDATA@@
+
+</table>
+<table>
+<tr><th><b>@@v_team@@</b> : @@v_goals@@</th><th> <b>Goals</b></th><th>  <mark>@@v_cautions@@</mark></th><th>  <b>Cautions</b></th><th>  <font color="red">@@v_reds@@</font></th><th>  <b>Send Off</b></th><tr>
+</table>
+
+<TABLE WIDTH="240"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="left">
+                <tr><th>Num </th><th>Name </th><th>Not Rostered </th><th>Started </th><th>Reserved </th><th>Minutes player </th><th>Sub In </th><th>Sub Out </th><th>Goal </th><th>Caution </th><th>Caution Min </th><th>Send Off </th><th> Send Off Minute </th></tr>
+
+@@v_TEAMDATA@@
+
+
+</table>
+</body>
+
+
+
+
+
