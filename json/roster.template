@@ -4,7 +4,7 @@
 		"roster": "@@roster@@",
 		"current": "@@pstatus@@",
 		"minutes" : "@@pm@@",
-		"goals": [
+		"scores": [
 			@@goals@@
 		],
 		"yellow": "@@py@@",
