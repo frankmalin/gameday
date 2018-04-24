@@ -12,6 +12,8 @@ json=$rpath/json
 currentgame=$data/gameday.properties
 timefile=$data/timer.properties
 
+mkdir -p $data
+
 # These are player fields
 # we are single threaded, so can use global for these ... we expect to retrieve, update, write in a short period of time
 pindex=""
