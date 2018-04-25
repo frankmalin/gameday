@@ -6,4 +6,8 @@ cp data/vsltfc.roster ../data/vsltfc.roster
 cp data/gameday.properties ../data/gameday.properties
 
 cd ../bin
-./03_game_stats.sh < ../test/test.in
+set `cat ../test/test.in`
+while test $# -gt 0
+do
+	./03_game_stats.sh $1
+done 
