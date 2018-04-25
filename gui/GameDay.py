@@ -3,13 +3,16 @@ import time
 
 from PyQt4 import QtGui, QtCore
 
+global home
+home="Home"
+global visitor
+visitor="Visitor"
+
 class Window(QtGui.QMainWindow):
     
     # Team Direction
     teamR="Home"
     teamL="Visitor"
-    home="Home"
-    visitor="Visitor"
 
     currentPossession="Home"
 
@@ -20,7 +23,15 @@ class Window(QtGui.QMainWindow):
         self.setWindowIcon(QtGui.QIcon('fc.png'))
         self.home()
 
+###############################################################
+#
+#   Define all the QPushButtons used in the description of the
+#   Field and action buttons. Every button make a call to a
+#   specific subroutine
+#
+###############################################################
     def home(self):
+
         homeSubButIn = QtGui.QPushButton("Sub H", self)
         homeSubButIn.clicked.connect(self.sub_home)
         homeSubButIn.resize(60,40)
@@ -50,7 +61,11 @@ class Window(QtGui.QMainWindow):
         homeOwn.clicked.connect(self.own_home)
         homeOwn.resize(60,20)
         homeOwn.move(10,130)
-
+        # Waveoff 
+        homeDisallow = QtGui.QPushButton("Disallow", self)
+        homeDisallow.clicked.connect(self.disallow_home)
+        homeDisallow.resize(60,20)
+        homeDisallow.move(10,150)
 
 	# Visitor
         visitorSubButIn = QtGui.QPushButton("Sub V", self)
@@ -82,9 +97,11 @@ class Window(QtGui.QMainWindow):
         visitorOwn.clicked.connect(self.own_visitor)
         visitorOwn.resize(60,20)
         visitorOwn.move(110,130)
-
-
-
+        # Waveoff
+        visitorDisallow = QtGui.QPushButton("Disallow", self)
+        visitorDisallow.clicked.connect(self.disallow_visitor)
+        visitorDisallow.resize(60,20)
+        visitorDisallow.move(110,150)
 
 	# Add in the text box for sub
 	global inTextbox
@@ -99,7 +116,7 @@ class Window(QtGui.QMainWindow):
         outTextbox.move(70,30)
         outTextbox.resize(40,20)
 
-	global otherTextBox # This is used to score most other events requiring a player
+	global otherTextbox # This is used to score most other events requiring a player
         otherTextbox = QtGui.QLineEdit(self)
         otherTextbox.move(70,70)
         otherTextbox.resize(40,20)
@@ -162,7 +179,8 @@ class Window(QtGui.QMainWindow):
 	global topLZone
 	topLZone = QtGui.QPushButton("Home zone"+self.direction_string_home(), self)
 	topLZone.setStyleSheet("QPushButton { background-color: #148A36 }"
-                            "QPushButton:hover { background-color: #0ff808 }")
+                            "QPushButton:hover { background-color: #0ff808 }"
+			    "QPushButton { font: bold 18px }" )
 
         topLZone.clicked.connect(self.zone_top_left)
         topLZone.resize(400,140)
@@ -171,7 +189,8 @@ class Window(QtGui.QMainWindow):
 	global topRZone
         topRZone = QtGui.QPushButton("Home zone"+self.direction_string_home(), self)
         topRZone.setStyleSheet("QPushButton { background-color: #148A36 }"
-                            "QPushButton:hover { background-color: #0ff808 }")
+                            "QPushButton:hover { background-color: #0ff808 }"
+			    "QPushButton { font: bold 18px }" )
         topRZone.clicked.connect(self.zone_top_right)
         topRZone.resize(400,140)
         topRZone.move(700, 70)
@@ -179,7 +198,8 @@ class Window(QtGui.QMainWindow):
 	global lowerLZone
         lowerLZone = QtGui.QPushButton("Visitor zone >>>", self)
         lowerLZone.setStyleSheet("QPushButton { background-color: #148A36 }"
-                            "QPushButton:hover { background-color: #0ff808 }")
+                            "QPushButton:hover { background-color: #0ff808 }"
+			    "QPushButton { font: bold 18px }")
         lowerLZone.clicked.connect(self.zone_lower_left)
         lowerLZone.resize(400,140)
         lowerLZone.move(300, 310)
@@ -187,7 +207,8 @@ class Window(QtGui.QMainWindow):
 	global lowerRZone
         lowerRZone = QtGui.QPushButton("Visitor zone >>>", self)
         lowerRZone.setStyleSheet("QPushButton { background-color: #148A36 }"
-                            "QPushButton:hover { background-color: #0ff808 }")
+                            "QPushButton:hover { background-color: #0ff808 }"
+			    "QPushButton { font: bold 18px }")
         lowerRZone.clicked.connect(self.zone_lower_right)
         lowerRZone.resize(400,140)
         lowerRZone.move(700, 310)
@@ -347,6 +368,14 @@ class Window(QtGui.QMainWindow):
 	
 
         self.show()
+
+##############################################################################
+#  
+#   Define the button specific actions to the pushed buttone
+#   In most cases, there is a call to a generic button with
+#   the team specified as a paramter
+#
+##############################################################################
  
     def team_direction(self):
 	print("team")
@@ -376,63 +405,71 @@ class Window(QtGui.QMainWindow):
 	else:
 	   return ">>>"
 
-
     def team_right(self):
 	return self.teamR
 
     def team_left(self):
 	return self.team
    
-    #def sub_in_home(self):
-#	textbox.setText("frank")
- #       self.sub_player("in", "home")
-
     def sub_out_home(self):
 	printf("This is a placeholder until all methods defined")
    
     def offsides_home(self):
-	offsides("Home")
+	self.offsides("Home")
 
     def offsides_visitor(self):
-	offsides("Visitor")
+	self.offsides("Visitor")
 
     def offsides(self, team):
-	prinf("Offsides: "+team)
+	print("Offsides: "+team)
 
     def yellow_home(self):
-       	yellow(home)
+       	self.yellow(home)
     def red_home(self):
-   	red(home)
+   	self.red(home)
     def goal_home(self):
-	goal_credit(home)
+	self.goal_credit(home)
     def assist_home(self):
-	goal_assist(home)
+	self.goal_assist(home)
     def own_home(self):
-	own(home)
+	self.own(home)
+    def disallow_home(self):
+	self.disallow(home)
 
     def yellow_visitor(self):
-        yellow(visitor)
+        self.yellow(visitor)
     def red_visitor(self):
-        red(visitor)
+        self.red(visitor)
     def goal_visitor(self):
-        goal_credit(visitor)
+        self.goal_credit(visitor)
     def assist_visitor(self):
-        goal_assist(visitor)
+        self.goal_assist(visitor)
     def own_visitor(self): 
-        own(visitor)
-
+        self.own(visitor)
+    def disallow_visitor(self):
+	self.disallow(visitor)
 
     def yellow(self, team):
-	print("Yellow: "+team+"number: "+otherTextBox)	
+	print("Yellow: "+team+"number: "+otherTextbox.displayText())	
+	otherTextbox.setText("")
     def red(self, team):
-        print("red: "+team+"number: "+otherTextBox)
-    def goal_credit(self, team):
-        print("goal: "+team+"number: "+otherTextBox)
-    def goal_assist(self, team):
-        print("assist: "+team+"number: "+otherTextBox)
-    def own(self, team):
-        print("own: "+team+"number: "+otherTextBox)
+        print("red: "+team+"number: "+otherTextbox.displayText())
+        otherTextbox.setText("")
 
+    def goal_credit(self, team):
+        print("goal: "+team+"number: "+otherTextbox.displayText())
+        otherTextbox.setText("")
+
+    def goal_assist(self, team):
+        print("assist: "+team+"number: "+otherTextbox.displayText())
+        otherTextbox.setText("")
+
+    def own(self, team):
+        print("own: "+team+"number: "+otherTextbox.displayText())
+	otherTextbox.setText("")
+
+    def disallow(self, team):
+	print("disallow: "+team)
 
 
     def sub_home(self):
@@ -445,9 +482,16 @@ class Window(QtGui.QMainWindow):
         inTextbox.setText("")
         outTextbox.setText("")
 
+    def who_action(self, team):
+	C=team[0]
+	c=C.lower()	
+	print("Character = "+str(c))
+	return c
 
     def sub_player(self, team, playerIn, playerOut):
-        print("Sub player"+team+" "+playerIn+", "+playerOut)
+        print("Sub player "+team+" "+playerIn+", "+playerOut)
+	print("Command : I"+self.who_action(team)+playerIn)
+	print("Command : O"+self.who_action(team)+playerOut)	
 
     def switch_possession(self):
 	# This is the change from who has the possession to a new possession
