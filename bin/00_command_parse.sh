@@ -25,61 +25,15 @@
 
 . "$data/gameday.properties"
 
-function usage()
-{
-	# This if the set of function to make the updates
-	cat $props/game_stats.properties  | xargs -i echo {} | tr '@' '\t'
-}
-
-function score()
-{
-	# A goal has been scored
-	local team=$1
-	local num=$2
-	local atminute=$3
-
-	# update ... scoreboard
-	update $team goals
-	update $team sog 
-
-	# update player stats (not sure about own goal)
-	updateGoal $team $num $atminute
-}
-
-function ownscore()
-{
-        # A goal has been scored
-        local team=$1
-        local num=$2
-        local atminute=$3
-	
-	# Update the the shots and goals
-	update `otherteam $team` goals
-	# update `otherteam $team` sog # Remove since this is really not a shot on goal
-
-	# update player stats for own goal
-	updateGoal $team $num ${atminute}Own
-}	
-
-function assist()
-{
-	local team=$1
-	local num=$2
-	local atminute=$3
-
-	# Update the roster with the assist time
-
-}
-
-# Here is the input item
 
 function command_parse()
 {
 action="$1" # init the input action
-#clockstate="stopped"
-#echo -n "GAME DAY> "
-#while read action
-#do
+dummyloop=1
+# This is a while do to allow for control, not really looping
+while test $dummyloop -gt 0 
+do
+	dummyloop=0
 
 	echo "gameday $action"
 
@@ -89,73 +43,106 @@ action="$1" # init the input action
 	case "$single" in
 		+)  # increment the clock
 			seconds=`echo $action | cut -c2-`
-			[[ `echo $seconds | egrep "^[[:digit:]]{1,3}$"` ]] || { echo "Seconds should be a number between 1 and 999, not $seconds" ; continue ; }
+			[[ `echo $seconds | egrep "^[[:digit:]]{1,3}$"` ]] || { echo "Seconds should be a number between 1 and 999, not $seconds" ; break ; }
 			trace i "Increment the clock by $seconds seconds"
 			adjusttime $single $seconds
 			;;
 		-)  # decrement the clock
 			seconds=`echo $action | cut -c2-`
-                        [[ `echo $seconds | egrep "^[[:digit:]]{1,3}$"` ]] || { echo "Seconds should be a number between 1 and 999, not $seconds" ; continue ; }
+                        [[ `echo $seconds | egrep "^[[:digit:]]{1,3}$"` ]] || { echo "Seconds should be a number between 1 and 999, not $seconds" ; break ; }
                         trace i "Increment the clock by $seconds seconds"
                         adjusttime $single $seconds
                         ;;
+		G) # There was a goal scored
+                        team=`echo $action | cut -c2`
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
+                        # num=`echo $action | cut -c3-`
+                        # [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; break ; }
+                        eventD="`teamname $team`"
+                        trace v $(buildevent GOAL `gettime` $eventD)
+                        score $team
+                        ;;
+		d) # The goal was disallowed
+                        team=`echo $action | cut -c2`
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
+                        num=`echo $action | cut -c3-`
+                        [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; break ; }
+                        eventD="previous goal is disallowed"
+                        trace v $(buildevent "GOAL DISALLOWED" `gettime` $eventD)
+                        disallowed $team 
+                        ;;
 		g) # There was a goal scored
 			team=`echo $action | cut -c2`
-			[[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+			[[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
 			num=`echo $action | cut -c3-`
-			[[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
+			[[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; break ; }
 			eventD="`teamname $team`, $num `playername $team $num`"
-			trace v $(buildevent GOAL `gettime` "$eventD")
-			score $team $num `gettime` 
+			trace v $(buildevent "SCORED BY" `gettime` "$eventD")
+			credit $team $num `gettime` 
 			;;
                 a) # There was an assist 
                         team=`echo $action | cut -c2`   
-                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
                         num=`echo $action | cut -c3-`   
-                        [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
+                        [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; break ; }
 			eventD="`teamname $team`, $num, `playername $team $num`"
 			trace v $(buildevent Assist `gettime` "$eventD")
 			assist $team $num `gettime`
 			;;
                O) # Own goal, but it will go against the home or visitor team
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
                         num=`echo $action | cut -c3-`
-                        [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
+                        [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; break ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
                         trace v $(buildevent "OWN GOAL" `gettime` "$eventD")
 			ownscore $team $num `gettime`
                         ;;
 		i) # This is a sub in
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
                         num=`echo $action | cut -c3-`
-                        [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
+                        [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; break ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
                         trace v $(buildevent "Substitution IN" `gettime` "$eventD")
 			updateSubIn $team $num `gettime` 
                         ;;
                 o) # This is a sub out 
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
                         num=`echo $action | cut -c3-`
-                        [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; continue ; }
+                        [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; break ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
                         trace v $(buildevent "Substitution OUT" `gettime` "$eventD")
                         updateSubOut $team $num `gettime`
                        ;;
 		f) #  foul
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
                         eventD="`teamname $team`"
                         trace v $(buildevent Foul `gettime` "$eventD")
 			update $team fouls
 			;;
+	       P) # Penalty Kick
+                        team=`echo $action | cut -c2`
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
+                        eventD="`teamname $team`"
+                        trace v $(buildevent Foul `gettime` "$eventD")
+                        update $team pk 
+                        ;;
+               u) # Offsides (flag is up) 
+                        team=`echo $action | cut -c2`
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
+                        eventD="`teamname $team`"
+                        trace v $(buildevent OFFSIDES `gettime` "$eventD")
+                        update $team offsides 
+                        ;;
+
 		y) # Yellow card issued
                         team=`echo $action | cut -c2`
 			num=`echo $action | grep -Eo '[0-9]{1,2}'`
 			reason=`echo $action | rev | cut -c1 | rev`
-                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
                         trace v $(buildevent "Yellow Card" `gettime` "$eventD")
 			updateYellow $team $num `gettime` $reason
@@ -164,7 +151,7 @@ action="$1" # init the input action
                         team=`echo $action | cut -c2`
                         num=`echo $action | cut -c3- | rev | cut -c2- | rev`
                         reason=`echo $action | rev | cut -c1 | rev`
-                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
                         eventD="`teamname $team`, $num, `playername $team $num`"
                         trace v $(buildevent "Red Card" `gettime` "$eventD")
 			updateRed $team $num `gettime` $reason
@@ -172,27 +159,27 @@ action="$1" # init the input action
 
 		c) # Corner kick
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
                         eventD="`teamname $team`"
                         trace v $(buildevent "Corner Kick" `gettime` "$eventD")
 			update $team corners
 			;;
 		s) # shot near net
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
                         eventD="`teamname $team`"
-                        trace v $(buildevent "Shot wide" `gettime` "$eventD")
+                        trace v $(buildevent "Shot" `gettime` "$eventD")
 			update $team shots
 			;;
 		S) # Shot on frame and a save
                         team=`echo $action | cut -c2`
-                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; continue ; }
-                        eventD="`teamname $team`"
-                        trace v $(buildevent "Shot On" `gettime` "$eventD")
-			eventD="$(teamname `otherteam $team`)"
+                        [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
+			eventD="$(teamname $team)"
                         trace v $(buildevent "Save" `gettime` "$eventD")
-			update `otherteam $team` saves
-			update $team sog 
+			update $team saves
+			update `otherteam $team` sog 
+
+
 			;;
 		2) # This is the start of the second half, begin the time
 			trace v $(buildevent Time `gettime` "Start of second half")
@@ -221,6 +208,9 @@ action="$1" # init the input action
 			trace T "test only event: KILL timer"
 			ps -ef | egrep timer.sh | egrep -v grep | tr -s ' ' | cut -f2 -d' '  | xargs -i kill -KILL {}
 			;;
+#		k) # This is a goal kick
+#			#
+#			;;	
 		[?H]) # Help
 			usage
 			;;
@@ -229,5 +219,7 @@ action="$1" # init the input action
 			trace i "Unknown option: $single"
 		esac
         [[ "`clockstate`" = "stopped" ]] && { trace E "Clock is not running please start the clock" ; }
+	break; # this is only a single loop, the while do simply controls the error behaviour the input
+done
 }
 

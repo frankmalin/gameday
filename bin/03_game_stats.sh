@@ -36,15 +36,29 @@ function score()
 {
 	# A goal has been scored
 	local team=$1
-	local num=$2
-	local atminute=$3
 
 	# update ... scoreboard
 	update $team goals
-	update $team sog 
+	update `otherteam $team` sog 
+}
 
-	# update player stats (not sure about own goal)
-	updateGoal $team $num $atminute
+function disallow()
+{
+	local team=$1
+	
+	downdate $team goals
+	downdate `otherteam $team` sog
+}
+
+function credit()
+{
+        # A goal has been scored
+        local team=$1
+        local num=$2
+        local atminute=$3
+
+        # update player stats (not sure about own goal)
+        updateGoal $team $num $atminute
 }
 
 function ownscore()
@@ -53,10 +67,6 @@ function ownscore()
         local team=$1
         local num=$2
         local atminute=$3
-	
-	# Update the the shots and goals
-	update `otherteam $team` goals
-	# update `otherteam $team` sog # Remove since this is really not a shot on goal
 
 	# update player stats for own goal
 	updateGoal $team $num ${atminute}Own
@@ -69,10 +79,12 @@ function assist()
 	local atminute=$3
 
 	# Update the roster with the assist time
+	# TODO
 
 }
 
 while test $# -gt 0
+do
 	command_parse $1
 	shift
 done

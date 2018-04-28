@@ -8,6 +8,7 @@
 		"sog" : "@@h_sog@@",
 		"corners" : "@@h_corners@@",
 		"fouls" : "@@h_fouls@@",
+		"pk" : "@@h_pk@@",
 		"yellow" : "@@h_cautions@@",
 		"red" : "@@h_reds@@"
 	},
@@ -19,6 +20,7 @@
                 "sog" : "@@v_sog@@",
                 "corners" : "@@v_corners@@",
                 "fouls" : "@@v_fouls@@",
+		"pk" : "@@v_pk@@",
                 "yellow" : "@@v_cautions@@",
                 "red" : "@@v_reds@@"
         },

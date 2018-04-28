@@ -101,15 +101,19 @@ function otherteam()
 
 timestr="time:"
 halfstr="half:"
+running="running:"
 function settime()
 {
         # this will start the time
         local whichtime=$1
+	local clockstate="stopped"
 
 	case $whichtime in
 		1) m=1
+		   clockstate="running"
 		;;
 		2) m=46
+		   clockstate="running"
 		;;
 		h) m="Halftime"
 		;;
@@ -119,7 +123,13 @@ function settime()
 	esac
         echo $timestr$m > $timefile
 	echo $halfstr$whichtime >> $timefile
-	[[ $whichtime = "1" || $whichtime = "2" ]] &&  $bpath/99_timer.sh &  
+	echo $running$clockstate >> $timefile
+	[[ $whichtime = "1" || $whichtime = "2" ]] && { ps -ef | egrep 99_timer.sh | egrep -v grep | tr -s ' ' | cut -f2 -d' '  | xargs -i -r kill -KILL {} ; $bpath/99_timer.sh & } 
+}
+
+function clockstate()
+{
+	echo `egrep "$running" $timefile | cut -f2 -d:`
 }
 
 function buildevent()
@@ -189,6 +199,7 @@ function initeach()
 	echo sog:0 >> $whichboard
 	echo corners:0 >> $whichboard
         echo fouls:0 >> $whichboard
+	echo pk:0 >> $whichboard
 	echo shots:0 >> $whichboard
 	echo saves:0 >> $whichboard
 	echo cautions:0 >> $whichboard
@@ -200,6 +211,25 @@ function initscoreboards()
 {
 	initeach $homescoreboard $hometeamname $hometeamlogo
 	initeach $visitorscoreboard $visitorteamname $visitorteamlogo
+}
+
+
+function downdate() # reverse an action that was previously done
+{
+        local team=$1
+        local attribute=$2
+        local scoreboard=${team}scoreboard
+        trace e $2
+        [[ "$team" = "h" ]] && scoreboard=$homescoreboard || scoreboard=$visitorscoreboard
+
+        local linenum=`egrep -n "$attribute:" $scoreboard | cut -f1 -d':'` || { trace E "Missing scoreboard attribute: $attribute" ; return 1 ; }
+
+        local value=`egrep "$attribute:" $scoreboard | cut -f2 -d':'`
+        let value--
+        let after=linenum-1
+
+        sed -i "${linenum}s/.*/$attribute:$value/" $scoreboard
+        trace x
 }
 
 function update()
@@ -263,19 +293,22 @@ function updateTeamMinutes()
 function playerlock()
 {
 	trace e
+	local playerlock=$1.lock
 	local lockPid="X"
 	local lockCount=0
 	while true
 	do
-		if mkdir $data/playerlock ; then
-			trace i "Player database LOCKED : $BASHPID"
-			touch $data/playerlock/$BASHPID
+		if mkdir $data/$playerlock ; then
+			trace i "Player database LOCKED : $playerlock, $BASHPID"
+			touch $data/$playerlock/$BASHPID
 			break; # lock the entire player data
 		else
-			trace i "pid : $BASHPID, waiting ($lockCount) on player database lock: `ls -1 $data/playerlock/`"
-			[[ "`ls -1 $data/playerlock/`" = "$lockPid" ]] && let lockCount+=1 || { lockCount=0 ; lockPid=`ls -1 $data/playerlock/` ; }
+			trace i "pid : $BASHPID, waiting ($lockCount) on player database lock: $playerlock,  `ls -1 $data/$playerlock/`"
+			# Check to see if the process which holds the lock exists
+			[[ "`ls -1 $data/$playerlock/`" = "$lockPid" ]] && let lockCount+=1 || { lockCount=0 ; lockPid=`ls -1 $data/$playerlock/` ; }
+			[[ `ps -ef | tr -s ' ' | cut -f2 -d' ' | egrep "$(ls -1 $data/$playerlock)"` ]] || rm -rf $data/$playerlock
 			sleep 1 # player lock sleep
-			[[ $lockCount -gt 100 ]] && rm -rf $data/playerlock
+			[[ $lockCount -gt 100 ]] && rm -rf $data/$playerlock
 		fi
 	done
 	trace x
@@ -284,8 +317,9 @@ function playerlock()
 function playerunlock()
 {
 	trace e 
-	trace i "Player database UNLOCKED : $BASHPID"
-	rm -rf $data/playerlock # free up the lock for others
+	local playerlock=$1.lock
+	trace i "Player database UNLOCKED : $playerlock, $BASHPID"
+	rm -rf $data/$playerlock # free up the lock for others
 	trace x
 }
 
@@ -294,12 +328,12 @@ function playerread()
 	trace e
 	local nolock=$3 # I think that we would need to do an unlock ... after the write of the data
 # could produce a lock 
-	[[ -z "$nolock" ]] && playerlock
 	local rosterP=$1
 	local number=$2
 
 	local roster=""
 	[[ "$rosterP" = "h" ]] && roster=$homeroster || roster=$visitorroster
+        [[ -z "$nolock" ]] && playerlock `basename $roster`
 
 	# This will pull the player record from the roster with all the current information
 	pfile=$roster
@@ -328,9 +362,9 @@ function playerwrite()
 	trace e
 	local line="\t$pstatus\t$pnum\t$pname\t$pg\t$pm\t$psi\t$pso\t$py\t$pyr\t$pr\t$prr\t$pss"
 	trace d $line
-	[[ -z "$pindex" || -z "pnum" ]] && { trace E "Player index not set" ; return ; }
+	[[ -z "$pindex" || -z "pnum" ]] && { playerunlock `basename $pfile` ; trace E "Player index not set" ; return ; }
         sed -i "${pindex}s/.*/$line/" $pfile
-	playerunlock
+	playerunlock `basename $pfile`
 	trace x
 }
 
@@ -366,7 +400,7 @@ function playerHtmlRecord()
 	dpname=`echo $pname | tr _ ' '`
 	returnR=`cat $html/$roster.player | sed  "s/@@pnum@@/$pnum/g; s/@@pname@@/$dpname/g; s/@@pg@@/$pg/g; s/@@pm@@/$pm/g; s/@@py@@/$py/g; s/@@pr@@/$pr/g"`
 	echo "playerHtmlRecord:$returnR" # This is the return html recored with the updated customer
-	playerunlock
+	playerunlock `basename $pfile`
 	trace x
 }
 
@@ -412,12 +446,12 @@ function playerJsonRecord()
 			;;
 		N) rstatus="NOTROSTERED"
 			;;
-		*) trace E "Unknown roster state: $pr"
+		*) trace E "Unknown roster state: $pss"
 	esac
 	local returnR=""
         returnR=`cat $json/roster.template | sed  "s/@@pnum@@/$pnum/g; s/@@pname@@/$dpname/g; s/@@pg@@/$pg/g; s/@@pm@@/$pm/g; s/@@py@@/$py/g; s/@@pr@@/$pr/g; s/@@pstatus@@/$fstatus/g; s/@@roster@@/$rstatus/g; s/@@goals@@/$goalrecord/g"`
         echo $returnR >> $json/$roster.json
-        playerunlock
+        playerunlock `basename $pfile`
         trace x
 }
 

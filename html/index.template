@@ -38,6 +38,7 @@ td {
                 <tr> <TD>@@h_shots@@</TD><TD>Shots</TD><TD>@@v_shots@@</TD></TD><TR>
 		<tr> <TD>@@h_corners@@</TD><TD>Corner</TD><TD>@@v_corners@@</TD></TD><TR>
 		<tr> <TD>@@h_fouls@@</TD><TD>Fouls</TD><TD>@@v_fouls@@</TD></TD><TR>
+		<tr> <TD>@@h_pk@@</TD><TD>PK</TD><TD>@@v_pk@@</TD></TD><TR>
 		<tr> <TD>@@h_cautions@@</TD><TD>Yellow</TD><TD>@@v_cautions@@</TD></TD><TR>
 		<tr> <TD>@@h_reds@@</TD><TD>Red</TD><TD>@@v_reds@@</TD></TD><TR>
 
@@ -79,7 +80,7 @@ td {
         <TD>
                 <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <th colspan="6">Sub Out</th>
-<tr><th>Num</th><th>Name</th><th>Goal@min</th><th>Min@min</th><th>Caution</th><th>Red</th><tr>
+<tr><th>Num</th><th>Name</th><th>Goal@min</th><th>Min</th><th>Caution</th><th>Red</th><tr>
 @@h_O@@
                 </TABLE>
 

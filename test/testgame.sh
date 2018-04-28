@@ -10,4 +10,5 @@ set `cat ../test/test.in`
 while test $# -gt 0
 do
 	./03_game_stats.sh $1
+	shift
 done 

@@ -28,9 +28,6 @@ function findTeamLogo() {
 	#http://npsl.bonzidev.com/imagedata/logo_Med_City_FC.png
 	local lookupName=$1
 	local logoName=`lynx -dump $baselink  | egrep -i logo | egrep -i "$lookupName" | tr '[' '\n'  | egrep -i "$lookupName" | cut -f1 -d']'`
-	#local teamName=`echo $teamName | cut -f2 -d'_' | cut -f1 -d'.'`
-	#wget $logolink/$logoName
-	#mv $logoName $data/
 	echo findTeamLogo: $logolink/$logoName
 }
 
@@ -40,8 +37,8 @@ function buildRoster()
 	local teamroster=$2
 	rm $teamroster.raw 2>/dev/null || true
 	# TODO The web page may be free formatted, which may mean that the schedule is not next ... the code should be such that it loops thru, until the first non blank first character
-	#set `lynx -dump $link | xargs -i echo "@{}@" | tr -s ' ' | tr ' ' '_' | egrep -v "@@" | egrep -v "@[a-z]" | egrep -A200 "@Roster@$" | egrep -B100 "@Ammouncement@$"`
-	list=`lynx -dump $link | tr -s ' ' | tr ' ' '_' | egrep -A200 "^Roster$"  | egrep -B200 "^Announcements$" | egrep -v "^$|^#|^_.*jpg.$" | egrep "^_" | sed "s#\[..\]##g" | sed "s#\[.\]##g"`
+	#set `lynx -dump $link | xargs -i echo "@{}@" | tr -s ' ' | tr ' ' '_' | egrep -v "@@" | egrep -v "@[a-z]" | egrep -A200 "@Roster@$" | egrep -B100 "@Announcement@$"`
+	list=`lynx -dump $link | tr -s ' ' | tr ' ' '_' | egrep -A200 "^Roster$"  | egrep -B200 "^Schedule$" | egrep -v "^$|^#|^_.*jpg.$" | egrep "^_" | sed "s#\[..\]##g" | sed "s#\[.\]##g"`
 
 	if [[ `echo $list | tr ' ' '\n' | rev | cut -f1 -d'_' | rev | sort -u | wc -l` -lt 8 ]] ; then 
 		# Remove the last tuplet
@@ -78,23 +75,38 @@ visitorroster=""
 
 trace e
 
+# Dump out the links team names
+teamgrep="medcity|sioux|dulu|lcaris|vslt|minneap|dako|twin"
+echo "======================================================="
+lynx -dump http://npsl.bonzidev.com/teams | egrep logo_ | egrep -i "$teamgrep" | cut -f3- -d[ | xargs -i echo Logo Link: {}
+echo
+lynx -dump http://npsl.bonzidev.com/teams | egrep sam.team | egrep -i "$teamgrep" | cut -f3 -d/ | cut -f1 -d. | xargs -i echo Team Link: {}
+echo "======================================================="
+
 process_args $@
 
 [[ -z "$home" || -z "$visitor" ]] && { echo need to provide a --home and --visitor parameter with values ; exit 1 ; }
 
-homelink=`findTeamBonziLink $home | egrep "findTeamBonziLink:" | cut -f2- -d:`
-visitorlink=`findTeamBonziLink $visitor | egrep "findTeamBonziLink:" | cut -f2- -d:`
+homedomain=`echo $home | tr -d _`
+visitordomain=`echo $visitor | tr -d _`
 
+homelink=`findTeamBonziLink $homedomain | egrep "findTeamBonziLink:" | cut -f2- -d:`
+visitorlink=`findTeamBonziLink $visitordomain | egrep "findTeamBonziLink:" | cut -f2- -d:`
+
+# The input can contain _, but remove for the bonzi team links
 hometeamlogo=`findTeamLogo $home | egrep "findTeamLogo:" | cut -f2- -d: | tr -d ' '`
 visitorteamlogo=`findTeamLogo $visitor | egrep "findTeamLogo:" | cut -f2- -d: | tr -d ' '`
 
+echo Results:
+echo $homelink $hometeamlogo
+echo $visitorlink $visitorteamlogo
 
 hometeamname=`echo $hometeamlogo | rev | cut -f1 -d'/' | rev | cut -f2- -d'_' | cut -f1 -d'.'`
 visitorteamname=`echo $visitorteamlogo | rev | cut -f1 -d'/' | rev | cut -f2- -d'_' | cut -f1 -d'.'`
 
 # TODO change to the call above for the real links
-homelink=http://medcityfc.bonzidev.com/sam/teams/index.php?team=3433240
-visitorlink=http://vsltfc.bonzidev.com/sam/teams/index.php?team=3426140 
+# homelink=http://medcityfc.bonzidev.com/sam/teams/index.php?team=3433240
+# visitorlink=http://vsltfc.bonzidev.com/sam/teams/index.php?team=3426140 
 
 hometeam=`fromlink $homelink`
 visitorteam=`fromlink $visitorlink`

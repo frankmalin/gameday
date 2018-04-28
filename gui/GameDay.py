@@ -1,6 +1,8 @@
 import sys
 import time
 
+import subprocess # This is the subprocess to make the bash
+
 from PyQt4 import QtGui, QtCore
 
 global home
@@ -135,30 +137,43 @@ class Window(QtGui.QMainWindow):
         visitorOffSide.resize(60,20)
         visitorOffSide.move(110,170)
 
+        # start clock
+        homePK = QtGui.QPushButton("PK", self)
+        homePK.clicked.connect(self.pk_home)
+        homePK.resize(60,20)
+        homePK.move(10,190)
+
+        # end first
+        visitorPK = QtGui.QPushButton("PK", self)
+        visitorPK.clicked.connect(self.pk_visitor)
+        visitorPK.resize(60,20)
+        visitorPK.move(110,190)
+
+
 	# Team actions
 	# offside	
 
        # start clock
         clockStart = QtGui.QPushButton("Start", self)
-        clockStart.clicked.connect(self.sub_out_home)
+        clockStart.clicked.connect(self.clock_start)
         clockStart.resize(60,20)
         clockStart.move(10,220)
 
         # end first
         clockHalf = QtGui.QPushButton("Stop", self)
-        clockHalf.clicked.connect(self.sub_out_home)
+        clockHalf.clicked.connect(self.clock_half)
         clockHalf.resize(60,20)
         clockHalf.move(110,220)
 
         # start second
         clockSecond = QtGui.QPushButton("Second", self)
-        clockSecond.clicked.connect(self.sub_out_home)
+        clockSecond.clicked.connect(self.clock_second_half)
         clockSecond.resize(60,20)
         clockSecond.move(10,240)
 
         # end game
         clockEnd = QtGui.QPushButton("Game", self)
-        clockEnd.clicked.connect(self.sub_out_home)
+        clockEnd.clicked.connect(self.clock_end)
         clockEnd.resize(60,20)
         clockEnd.move(110,240)
 
@@ -254,7 +269,7 @@ class Window(QtGui.QMainWindow):
 
         # end game
         lowerPenalty = QtGui.QPushButton("Penalty", self)
-        lowerPenalty.clicked.connect(self.penalty_home)
+        lowerPenalty.clicked.connect(self.penalty_visitor)
         lowerPenalty.resize(60,20)
         lowerPenalty.move(670,300)
 
@@ -411,9 +426,6 @@ class Window(QtGui.QMainWindow):
     def team_left(self):
 	return self.team
    
-    def sub_out_home(self):
-	printf("This is a placeholder until all methods defined")
-   
     def offsides_home(self):
 	self.offsides("Home")
 
@@ -422,6 +434,17 @@ class Window(QtGui.QMainWindow):
 
     def offsides(self, team):
 	print("Offsides: "+team)
+	self.command("o"+self.who_action(team)+otherTextbox.displayText())
+
+    def pk_home(self):
+        self.pk("Home")
+
+    def pk_visitor(self):
+        self.pk("Visitor")
+
+    def pk(self, team):
+        print("Penalty Kick: "+team)
+        self.command("P"+self.who_action(team)+otherTextbox.displayText())
 
     def yellow_home(self):
        	self.yellow(home)
@@ -451,25 +474,32 @@ class Window(QtGui.QMainWindow):
 
     def yellow(self, team):
 	print("Yellow: "+team+"number: "+otherTextbox.displayText())	
+	self.command("y"+self.who_action(team)+otherTextbox.displayText())
 	otherTextbox.setText("")
     def red(self, team):
         print("red: "+team+"number: "+otherTextbox.displayText())
+	self.command("r"+self.who_action(team)+otherTextbox.displayText())
         otherTextbox.setText("")
 
     def goal_credit(self, team):
         print("goal: "+team+"number: "+otherTextbox.displayText())
+	self.command("c"+self.who_action(team)+otherTextbox.displayText())
         otherTextbox.setText("")
 
     def goal_assist(self, team):
         print("assist: "+team+"number: "+otherTextbox.displayText())
+	self.command("a"+self.who_action(team)+otherTextbox.displayText())
         otherTextbox.setText("")
 
     def own(self, team):
         print("own: "+team+"number: "+otherTextbox.displayText())
+	self.command("O"+self.who_action(team)+otherTextbox.displayText())
 	otherTextbox.setText("")
+
 
     def disallow(self, team):
 	print("disallow: "+team)
+	self.command("d"+self.who_action(team))
 
 
     def sub_home(self):
@@ -492,6 +522,8 @@ class Window(QtGui.QMainWindow):
         print("Sub player "+team+" "+playerIn+", "+playerOut)
 	print("Command : I"+self.who_action(team)+playerIn)
 	print("Command : O"+self.who_action(team)+playerOut)	
+	self.command("i"+self.who_action(team)+playerIn)
+	self.command("o"+self.who_action(team)+playerOut)
 
     def switch_possession(self):
 	# This is the change from who has the possession to a new possession
@@ -521,6 +553,7 @@ class Window(QtGui.QMainWindow):
     def shot(self, team):
 	print("shot:"+team)
 	print("Time:Shot:noop:"+team+":"+self.timestamp())
+	self.command("s"+self.who_action(team))
     
     # save
     def save_right(self):
@@ -535,6 +568,7 @@ class Window(QtGui.QMainWindow):
     def save(self, team):
 	print("Save team:"+team)
 	print("Time:Save:noop:"+team+":"+self.timestamp())
+	self.command("S"+self.who_action(team))
 
     def goal_right(self):
         self.goal(self.teamL)
@@ -545,11 +579,24 @@ class Window(QtGui.QMainWindow):
     def goal(self, team):
         print("Goal:"+team)
 	print("Time:Goal:stop:"+team+":"+self.timestamp())
+	self.command("G"+self.who_action(team))
 
     def timestamp(self):
 	string_value1 = str(time.time())
 	return string_value1 
 
+   # Clock
+    def clock_start(self):
+	self.command("1")
+
+    def clock_half(self):
+	self.command("h");
+
+    def clock_second_half(self):
+	self.command("2")
+
+    def clock_end(self):
+	self.command("E")
 
     #goalkick 
     def goalkick_right(self):
@@ -561,11 +608,16 @@ class Window(QtGui.QMainWindow):
     def goalkick(self, team):
 	print("Goal Kick:"+team)
 	print("Time:Goalkick:stop:"+team+":"+self.timestamp())
+	self.command("k"+self.who_action(team))
 
     def penalty_home(self):
 	print("Penalty:Home")
+	self.penalty(home)
     def penalty_visitor(self):
 	print("Penalty:Visitor")
+	self.penalty(visitor)
+    def penalty(self, team):
+	self.command("f"+self.who_action(team))
 
     # Out
     def out_top(self):
@@ -588,6 +640,7 @@ class Window(QtGui.QMainWindow):
     def corner(self, team):
 	print("Corner Kick:"+team)
 	print("Time:Corner:stop:"+team+":"+self.timestamp())
+	self.command("c"+self.who_action(team))
 
     def which_zone(self, whichTeam, whichOne):
  	if (( whichOne == "right" and whichTeam == self.teamR ) or ( whichOne == "left" and whichTeam == self.teamL )):
@@ -608,6 +661,9 @@ class Window(QtGui.QMainWindow):
 	self.currentPossession=team
 	print("Time:Zone:touch:"+team+":"+self.timestamp())
 
+    def command(self, whichCommand):
+	print("Command to run: "+whichCommand)
+	subprocess.call(["/home/malin/github.com/gameday/bin/03_game_stats.sh", whichCommand])
         
 def run():
     app = QtGui.QApplication(sys.argv)
