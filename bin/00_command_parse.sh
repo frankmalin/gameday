@@ -65,9 +65,7 @@ do
 		d) # The goal was disallowed
                         team=`echo $action | cut -c2`
                         [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
-                        num=`echo $action | cut -c3-`
-                        [[ `echo $num | egrep "^[[:digit:]]{1,2}$"` ]] || { echo "The last parm: $num, should be numerical" ; break ; }
-                        eventD="previous goal is disallowed"
+                        eventD="`teamname $team` previous goal is disallowed"
                         trace v $(buildevent "GOAL DISALLOWED" `gettime` $eventD)
                         disallowed $team 
                         ;;

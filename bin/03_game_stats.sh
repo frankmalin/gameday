@@ -42,7 +42,7 @@ function score()
 	update `otherteam $team` sog 
 }
 
-function disallow()
+function disallowed()
 {
 	local team=$1
 	

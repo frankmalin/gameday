@@ -262,16 +262,20 @@ class Window(QtGui.QMainWindow):
         lowerPass.resize(600,50)
         lowerPass.move(400, 260)
         # start second
-        topPenalty = QtGui.QPushButton("Penalty", self)
+        topPenalty = QtGui.QPushButton("Penalty Home", self)
+        topPenalty.setStyleSheet("QPushButton { background-color: #148A36 }"
+                            "QPushButton:hover { background-color: red }")
         topPenalty.clicked.connect(self.penalty_home)
-        topPenalty.resize(60,20)
-        topPenalty.move(670,200)
+        topPenalty.resize(100,20)
+        topPenalty.move(650,200)
 
         # end game
-        lowerPenalty = QtGui.QPushButton("Penalty", self)
+        lowerPenalty = QtGui.QPushButton("Penalty Vistor", self)
+        lowerPenalty.setStyleSheet("QPushButton { background-color: #148A36 }"
+                            "QPushButton:hover { background-color: red }")
         lowerPenalty.clicked.connect(self.penalty_visitor)
-        lowerPenalty.resize(60,20)
-        lowerPenalty.move(670,300)
+        lowerPenalty.resize(100,20)
+        lowerPenalty.move(650,300)
 
 	
 	# Shot(2)
@@ -434,7 +438,7 @@ class Window(QtGui.QMainWindow):
 
     def offsides(self, team):
 	print("Offsides: "+team)
-	self.command("o"+self.who_action(team)+otherTextbox.displayText())
+	self.command("u"+self.who_action(team)+otherTextbox.displayText())
 
     def pk_home(self):
         self.pk("Home")
