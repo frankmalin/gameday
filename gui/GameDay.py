@@ -154,29 +154,43 @@ class Window(QtGui.QMainWindow):
 	# offside	
 
        # start clock
+	global clockStart
         clockStart = QtGui.QPushButton("Start", self)
         clockStart.clicked.connect(self.clock_start)
         clockStart.resize(60,20)
         clockStart.move(10,220)
 
         # end first
-        clockHalf = QtGui.QPushButton("Stop", self)
+	global clockHalf
+        clockHalf = QtGui.QPushButton("Halftime", self)
+	clockHalf.setEnabled(False)
         clockHalf.clicked.connect(self.clock_half)
         clockHalf.resize(60,20)
         clockHalf.move(110,220)
 
+	# Re-enable, this will enable all the buttons on a mistake
+        clockEnable = QtGui.QPushButton("Reset", self)
+        clockEnable.clicked.connect(self.clock_enable)
+        clockEnable.resize(30,20)
+        clockEnable.move(70,240)
+
+
         # start second
+	global clockSecond
         clockSecond = QtGui.QPushButton("Second", self)
+	clockSecond.setEnabled(False)
         clockSecond.clicked.connect(self.clock_second_half)
         clockSecond.resize(60,20)
         clockSecond.move(10,240)
 
         # end game
+	global clockEnd
         clockEnd = QtGui.QPushButton("Game", self)
+	clockEnd.setEnabled(False)
         clockEnd.clicked.connect(self.clock_end)
         clockEnd.resize(60,20)
         clockEnd.move(110,240)
-
+	
 	global directionHome
         directionHome = QtGui.QPushButton(self.direction_string_home(), self)
         directionHome.clicked.connect(self.team_toggle)
@@ -384,7 +398,6 @@ class Window(QtGui.QMainWindow):
         goalkickLR.clicked.connect(self.goalkick_right)
         goalkickLR.resize(50,150)
         goalkickLR.move(1100, 300)
-	
 
         self.show()
 
@@ -591,15 +604,28 @@ class Window(QtGui.QMainWindow):
 
    # Clock
     def clock_start(self):
+	clockHalf.setEnabled(True)
+	clockStart.setEnabled(False)
 	self.command("1")
 
     def clock_half(self):
+	clockHalf.setEnabled(False)
+	clockSecond.setEnabled(True)
 	self.command("h");
 
+    def clock_enable(self):
+	clockStart.setEnabled(True)
+	clockHalf.setEnabled(True)
+	clockSecond.setEnabled(True)
+	clockEnd.setEnabled(True)
+
     def clock_second_half(self):
+	clockSecond.setEnabled(False)
+	clockEnd.setEnabled(True)
 	self.command("2")
 
     def clock_end(self):
+	clockEnd.setEnabled(False)
 	self.command("E")
 
     #goalkick 

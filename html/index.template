@@ -33,14 +33,15 @@ td {
                 <col width="120">
                 <col width="50">
 		<th colspan="3">Game stats</th>
-    		<tr> <TD>@@h_sog@@</TD><TD>SOG</TD><TD>@@v_sog@@</TD></TD><TR>
-		<tr> <TD>@@h_saves@@</TD><TD>Saves</TD><TD>@@v_saves@@</TD></TD><TR>
-                <tr> <TD>@@h_shots@@</TD><TD>Shots</TD><TD>@@v_shots@@</TD></TD><TR>
-		<tr> <TD>@@h_corners@@</TD><TD>Corner</TD><TD>@@v_corners@@</TD></TD><TR>
-		<tr> <TD>@@h_fouls@@</TD><TD>Fouls</TD><TD>@@v_fouls@@</TD></TD><TR>
+    		<tr> <TD>@@h_sog@@</TD><TD>SOG</TD><TD>@@v_sog@@</TD></TD></TR>
+		<tr> <TD>@@h_saves@@</TD><TD>Saves</TD><TD>@@v_saves@@</TD></TD></TR>
+                <tr> <TD>@@h_shots@@</TD><TD>Shots</TD><TD>@@v_shots@@</TD></TD></TR>
+		<tr> <TD>@@h_percent@@</TD><TD>Poss %</TD><TD>@@v_percent@@</TD></TR>
+		<tr> <TD>@@h_corners@@</TD><TD>Corner</TD><TD>@@v_corners@@</TD></TD></TR>
+		<tr> <TD>@@h_fouls@@</TD><TD>Fouls</TD><TD>@@v_fouls@@</TD></TD></TR>
 		<tr> <TD>@@h_pk@@</TD><TD>PK</TD><TD>@@v_pk@@</TD></TD><TR>
-		<tr> <TD>@@h_cautions@@</TD><TD>Yellow</TD><TD>@@v_cautions@@</TD></TD><TR>
-		<tr> <TD>@@h_reds@@</TD><TD>Red</TD><TD>@@v_reds@@</TD></TD><TR>
+		<tr> <TD>@@h_cautions@@</TD><TD>Yellow</TD><TD>@@v_cautions@@</TD></TD></TR>
+		<tr> <TD>@@h_reds@@</TD><TD>Red</TD><TD>@@v_reds@@</TD></TD></TR>
 
 	</table>
     </TD>
