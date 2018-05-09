@@ -76,7 +76,7 @@ visitorroster=""
 trace e
 
 # Dump out the links team names
-teamgrep="medcity|sioux|dulu|lcaris|vslt|minneap|dako|twin"
+teamgrep="med|sioux|dulu|lcaris|vslt|minneap|dako|twin"
 echo "======================================================="
 lynx -dump http://npsl.bonzidev.com/teams | egrep logo_ | egrep -i "$teamgrep" | cut -f3- -d[ | xargs -i echo Logo Link: {}
 echo
