@@ -22,7 +22,7 @@ class Window(QtGui.QMainWindow):
         super(Window, self).__init__()
         self.setGeometry(50, 50, 1200, 600)
         self.setWindowTitle("Med City FC Game Day")
-        self.setWindowIcon(QtGui.QIcon('fc.png'))
+        self.setWindowIcon(QtGui.QIcon('../image/Med City FC.png'))
         self.home()
 
 ###############################################################
@@ -202,6 +202,20 @@ class Window(QtGui.QMainWindow):
         directionVisitor.clicked.connect(self.team_toggle)
         directionVisitor.resize(60,20)
         directionVisitor.move(110,280)
+
+	# This is to show a snippet of the index file
+	global snippet
+	snippet = QtGui.QPushButton("Index", self)
+	snippet.clicked.connect(self.snippet_index)
+	snippet.resize(60,20)
+	snippet.move(10, 320)
+
+        global snippetBox 
+        snippetBox = QtGui.QLineEdit(self)
+        snippetBox.setStyleSheet("color: blue;")
+	snippetBox.setReadOnly(True)
+        snippetBox.move(10,340)
+        snippetBox.resize(100,20)
 
 	# Field Action
 	# Defensive Zone
@@ -523,6 +537,13 @@ class Window(QtGui.QMainWindow):
         self.sub_player("home", inTextbox.displayText(), outTextbox.displayText())
 	inTextbox.setText("")
 	outTextbox.setText("")
+
+    def snippet_index(self):
+	# This is a snippet of the html which is being produced
+	file = open("../html/index.txt", "r") 
+	line=file.read()
+	snippetBox.setText(line)
+
 
     def sub_visitor(self):
         self.sub_player("visitor", inTextbox.displayText(), outTextbox.displayText())

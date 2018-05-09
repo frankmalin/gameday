@@ -197,6 +197,7 @@ function initeach()
 	echo logo:$teamlogo >> $whichboard
 	echo goals:0 >> $whichboard
 	echo sog:0 >> $whichboard
+	echo percent:0 >> $whichboard
 	echo corners:0 >> $whichboard
         echo fouls:0 >> $whichboard
 	echo pk:0 >> $whichboard
