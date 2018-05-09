@@ -193,7 +193,7 @@ do
 			settime h
 			;;
 		1) # This is a start of the first half (this will be primed to start maybe)
-			[[ -d $log ]] && mv $log $log-`date | tr ' ' '_' | tr ':' '-'` # start with a fresh set of logs
+			# [[ -d $log ]] && mv $log $log-`date | tr ' ' '_' | tr ':' '-'` # start with a fresh set of logs
 			settime 1
 			trace v $(buildevent Time `gettime` "First Half is underway")	
 			initscoreboards
