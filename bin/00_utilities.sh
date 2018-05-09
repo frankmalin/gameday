@@ -246,7 +246,7 @@ function update()
 	local value=`egrep "$attribute:" $scoreboard | cut -f2 -d':'`
 	let value++
 	let after=linenum-1
-	mv $scoreboard $scoreboard-`date | tr ' ' '_' | tr ' ' '-'`
+	cp $scoreboard $scoreboard-`date | tr ' ' '_' | tr ':' '-'`
 	sed -i "${linenum}s/.*/$attribute:$value/" $scoreboard
 	trace x
 }
