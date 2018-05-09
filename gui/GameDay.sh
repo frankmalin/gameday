@@ -1,4 +1,4 @@
-#!/bin/bashe
+#!/bin/bash
 # 
 # Starter shell to allow for file redirect
 #
