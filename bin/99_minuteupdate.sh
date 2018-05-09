@@ -75,7 +75,8 @@ function updateScoreBoard()
 {
 	trace e
 	# Generate the text file, so the lynx file
-	[[ -f $html/index.html ]] && { lynx -dump `realpath $html/index.html` | head -n10 | egrep Minute > $html/index.txt ; }
+	[[ -f $html/index.html ]] \
+		&& { cp $html/index.html $html/index.html-`date | tr ' ' '_' | tr ':' '-'` ; lynx -dump `realpath $html/index.html` | head -n10 | egrep Minute > $html/index.txt ; }
 	cp $html/index.template $html/index.html
 	updateTeamScoreBoard h $html/index.html
 	updateTeamScoreBoard v $html/index.html

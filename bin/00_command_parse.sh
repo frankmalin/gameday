@@ -156,8 +156,8 @@ do
                         ;;
 
 		C) # This is to force the update of the percent (which is not totally integrated into the code)
-			updatePercent "h" "`tail $data/h.possession`"
-			updatePercent "v" "`tail $data/v.possession`"
+			updatePercent "h" "`tail -n1 $data/h.possession`"
+			updatePercent "v" "`tail -n1 $data/v.possession`"
 			;; 
 
 		c) # Corner kick
