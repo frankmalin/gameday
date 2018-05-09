@@ -155,6 +155,11 @@ do
 			updateRed $team $num `gettime` $reason
                         ;;
 
+		C) # This is to force the update of the percent (which is not totally integrated into the code)
+			updatePercent "h" "`tail $data/h.possession`"
+			updatePercent "v" "`tail $data/v.possession`"
+			;; 
+
 		c) # Corner kick
                         team=`echo $action | cut -c2`
                         [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }

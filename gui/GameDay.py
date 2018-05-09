@@ -543,6 +543,7 @@ class Window(QtGui.QMainWindow):
 	file = open("../html/index.txt", "r") 
 	line=file.read()
 	snippetBox.setText(line)
+	self.command("C")
 
 
     def sub_visitor(self):
@@ -714,7 +715,7 @@ class Window(QtGui.QMainWindow):
 
     def command(self, whichCommand):
 	print("Command to run: "+whichCommand)
-	subprocess.call(["/home/malin/github.com/gameday/bin/03_game_stats.sh", whichCommand])
+	subprocess.call(["../bin/03_game_stats.sh", whichCommand])
         
 def run():
     app = QtGui.QApplication(sys.argv)

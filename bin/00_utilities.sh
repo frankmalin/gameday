@@ -251,6 +251,25 @@ function update()
 	trace x
 }
 
+function updatePercent()
+{
+        local team=$1
+        local percent=$2
+	local attribute="percent"
+	
+        local scoreboard=${team}scoreboard
+        trace e $2
+        [[ "$team" = "h" ]] && scoreboard=$homescoreboard || scoreboard=$visitorscoreboard
+
+        local linenum=`egrep -n "$attribute:" $scoreboard | cut -f1 -d':'` || { trace E "Missing scoreboard attribute: $attribute" ; return 1 ; }
+
+        let after=linenum-1
+
+        sed -i "${linenum}s/.*/$attribute:$percent/" $scoreboard
+        trace x
+
+}
+
 function updateMinutesPlayed()
 {
 	updateTeamMinutes h
