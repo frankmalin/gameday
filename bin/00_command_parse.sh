@@ -181,7 +181,6 @@ do
                         trace v $(buildevent "Save" `gettime` "$eventD")
 			update $team saves
 			update `otherteam $team` sog 
-			update `otherteam $team` shots
 
 
 			;;
