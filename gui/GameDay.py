@@ -514,7 +514,7 @@ class Window(QtGui.QMainWindow):
 
     def goal_credit(self, team):
         print("goal: "+team+"number: "+otherTextbox.displayText())
-	self.command("c"+self.who_action(team)+otherTextbox.displayText())
+	self.command("g"+self.who_action(team)+otherTextbox.displayText())
         otherTextbox.setText("")
 
     def goal_assist(self, team):
