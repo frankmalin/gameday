@@ -8,9 +8,10 @@
 #
 set -x
 data=../data/
+log=../log/
 function totalpasses()
 {
-        cat $data/possession | wc -l
+        cat $log/GameDay.Gui.log | egrep "^Time:.*:touch:" | wc -l
 
 }
 
@@ -18,11 +19,11 @@ function teampasses()
 {
         local team=$1
         local teamabbr=`echo $team | cut -c1`
-        egrep -c "${teamabbr}T" $data/possession
+        egrep -i -c "^Time:.*:touch:${teamabbr}" $log/GameDay.Gui.log 
 
 }
 
-[[ ! -f "$data/possession" ]] && { echo "Failed to find possession file, none calculated" ; exit 1 ; }
+[[ ! -f "$log/GameDay.Gui.log" ]] && { echo "Failed to find possession file, none calculated" ; exit 1 ; }
 
 tp=$((`totalpasses` ))
 hpass=$((`teampasses home` * 100 ))
