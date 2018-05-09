@@ -40,7 +40,6 @@ function score()
 	# update ... scoreboard
 	update $team goals
 	update $team sog 
-	update $team shots 
 }
 
 function disallowed()
