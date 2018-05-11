@@ -199,6 +199,7 @@ function initeach()
 	echo sog:0 >> $whichboard
 	echo percent:0 >> $whichboard
 	echo corners:0 >> $whichboard
+	echo offsides:0 >> $whichboard
         echo fouls:0 >> $whichboard
 	echo pk:0 >> $whichboard
 	echo shots:0 >> $whichboard
@@ -240,6 +241,10 @@ function update()
 	local scoreboard=${team}scoreboard
 	trace e $2
 	[[ "$team" = "h" ]] && scoreboard=$homescoreboard || scoreboard=$visitorscoreboard
+
+	# check to see if the attribute exists, and it is defined in the scoreboard
+	[[ -z "$attribute" ]] && { trace E "Missing attribute in scoreboard for file update" ; return 1 ; }  
+	egrep "$attribute:" $scoreboard || { trace E "Failed to find $attribute in $scoreboard, skipping update" ; return 1 ; }
 
 	local linenum=`egrep -n "$attribute:" $scoreboard | cut -f1 -d':'` || { trace E "Missing scoreboard attribute: $attribute" ; return 1 ; }
 
