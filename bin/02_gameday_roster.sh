@@ -22,7 +22,7 @@ function nonRoster()
 	cat $file | while read line
 	do
 		local s=`echo $line | cut -f1 -d' '`
-		sed -i "s#$line#$line\t0\t0\t0\t0\t0\t0\t0\t0\t$s#g" $file
+		sed -i "s#$line#$line\t0\t0\t0\t0\t0\t0\t0\t0\t0\t$s#g" $file
 	done
 }
 
