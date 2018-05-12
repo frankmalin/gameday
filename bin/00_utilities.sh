@@ -371,15 +371,15 @@ function playerread()
 	pnum=`echo $p | tr -s ' ' | cut -f2 -d' '`
 	pname=`echo $p | tr -s ' '| cut -f3 -d' '`
 	pg=`echo $p | tr -s ' '| cut -f4 -d' '`
-	pa='' # `echo $p | tr -s ' '| cut -f4 -d' '` # TODO Add another column
-	pm=`echo $p | tr -s ' '| cut -f5 -d' '`
-	psi=`echo $p | tr -s ' '| cut -f6 -d' '`
-	pso=`echo $p | tr -s ' '| cut -f7 -d' '`
-	py=`echo $p | tr -s ' '| cut -f8 -d' '`
-	pyr=`echo $p | tr -s ' '| cut -f9 -d' '`
-	pr=`echo $p | tr -s ' '| cut -f10 -d' '`
-	prr=`echo $p | tr -s ' '| cut -f11 -d' '`
-	pss=`echo $p | tr -s ' '| cut -f12 -d' '` # start status
+	pa=`echo $p | tr -s ' '| cut -f5 -d' '` 
+	pm=`echo $p | tr -s ' '| cut -f6 -d' '`
+	psi=`echo $p | tr -s ' '| cut -f7 -d' '`
+	pso=`echo $p | tr -s ' '| cut -f8 -d' '`
+	py=`echo $p | tr -s ' '| cut -f9 -d' '`
+	pyr=`echo $p | tr -s ' '| cut -f10 -d' '`
+	pr=`echo $p | tr -s ' '| cut -f11 -d' '`
+	prr=`echo $p | tr -s ' '| cut -f12 -d' '`
+	pss=`echo $p | tr -s ' '| cut -f13 -d' '` # start status
 trace d "$pstatus $pnum $pname $pg $pm ..."
 	trace x
 }
@@ -387,7 +387,7 @@ trace d "$pstatus $pnum $pname $pg $pm ..."
 function playerwrite()
 {
 	trace e
-	local line="\t$pstatus\t$pnum\t$pname\t$pg\t$pm\t$psi\t$pso\t$py\t$pyr\t$pr\t$prr\t$pss"
+	local line="\t$pstatus\t$pnum\t$pname\t$pg\t$pa\t$pm\t$psi\t$pso\t$py\t$pyr\t$pr\t$prr\t$pss"
 	trace d $line
 	[[ -z "$pindex" || -z "pnum" ]] && { playerunlock `basename $pfile` ; trace E "Player index not set" ; return ; }
         sed -i "${pindex}s/.*/$line/" $pfile
@@ -425,7 +425,7 @@ function playerHtmlRecord()
 	
 	playerread $roster $number
 	dpname=`echo $pname | tr _ ' '`
-	returnR=`cat $html/$roster.player | sed  "s/@@pnum@@/$pnum/g; s/@@pname@@/$dpname/g; s/@@pg@@/$pg/g; s/@@pm@@/$pm/g; s/@@py@@/$py/g; s/@@pr@@/$pr/g"`
+	returnR=`cat $html/$roster.player | sed  "s/@@pnum@@/$pnum/g; s/@@pname@@/$dpname/g; s/@@pg@@/$pg/g; s/@@pa@@/$pa/g; s/@@pm@@/$pm/g; s/@@py@@/$py/g; s/@@pr@@/$pr/g"`
 	echo "playerHtmlRecord:$returnR" # This is the return html recored with the updated customer
 	playerunlock `basename $pfile`
 	trace x
@@ -452,7 +452,18 @@ function playerJsonRecord()
 			shift
 		done	
 	fi
-	goalrecord="`echo $goalrecord | rev | cut -c2- | rev`" # remove the last comma on the continuation 
+        if [[ "$pa" != "0" ]] ; then
+                set `echo $pa | tr '_' ' '`
+                while test $# -gt 0
+                do
+                        [[ "`echo $1 | egrep Own`" ]] && type="own" || type="goal"
+			type="assist"
+                        assistminute=`echo $1 | grep -Eo '[0-9]{1,2}'`
+                        goalrecord="$goalrecord `echo $goaltemplate | sed "s/@@type@@/$type/g; s/@@goalminute@@/$assistminute/g"` "
+                        shift
+                done
+        fi
+	goalrecord="`echo $goalrecord | rev | cut -c2- | rev`" # remove the last comma on the continuation	
 	local fstatus=""
 	case $pstatus in
 		S) fstatus="PITCH"
