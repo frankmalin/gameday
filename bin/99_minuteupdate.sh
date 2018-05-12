@@ -114,7 +114,7 @@ function pushTheData()
 {
 	# Prereq aws cli installed on machine	
 	# connection information configured for aws
-echo TODO	aws s3 cp $html/index.html s3://mfcgameday/currentgame/ --acl public-read
+	aws s3 cp $html/index.html s3://mfcgameday/currentgame/ --acl public-read
 }
 
 # Make the call to update the minutes played.

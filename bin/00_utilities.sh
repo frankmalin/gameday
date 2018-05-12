@@ -22,6 +22,7 @@ pstatus=""
 pnum=""
 pname=""
 pg=""
+pa=""
 pm=""
 psi=""
 pso=""
@@ -370,6 +371,7 @@ function playerread()
 	pnum=`echo $p | tr -s ' ' | cut -f2 -d' '`
 	pname=`echo $p | tr -s ' '| cut -f3 -d' '`
 	pg=`echo $p | tr -s ' '| cut -f4 -d' '`
+	pa='' # `echo $p | tr -s ' '| cut -f4 -d' '` # TODO Add another column
 	pm=`echo $p | tr -s ' '| cut -f5 -d' '`
 	psi=`echo $p | tr -s ' '| cut -f6 -d' '`
 	pso=`echo $p | tr -s ' '| cut -f7 -d' '`

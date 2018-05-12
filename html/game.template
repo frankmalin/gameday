@@ -24,7 +24,7 @@ td {
 <br>
 <br>
 <TABLE WIDTH="240"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="left">
-	<tr><th>Num </th><th>Name </th><th>Not Rostered </th><th>Started </th><th>Reserved </th><th>Minutes player </th><th>Sub In </th><th>Sub Out </th><th>Goal </th><th>Caution </th><th>Caution Min </th><th>Send Off </th><th> Send Off Minute </th></tr>
+	<tr><th>Num </th><th>Name </th><th>Not Rostered </th><th>Started </th><th>Reserved </th><th>Minutes player </th><th>Sub In </th><th>Sub Out </th><th>Goal </th><th>Assist</th><th>Caution </th><th>Caution Min </th><th>Send Off </th><th> Send Off Minute </th></tr>
 
 @@h_TEAMDATA@@
 
@@ -34,7 +34,7 @@ td {
 </table>
 
 <TABLE WIDTH="240"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="left">
-                <tr><th>Num </th><th>Name </th><th>Not Rostered </th><th>Started </th><th>Reserved </th><th>Minutes player </th><th>Sub In </th><th>Sub Out </th><th>Goal </th><th>Caution </th><th>Caution Min </th><th>Send Off </th><th> Send Off Minute </th></tr>
+                <tr><th>Num </th><th>Name </th><th>Not Rostered </th><th>Started </th><th>Reserved </th><th>Minutes player </th><th>Sub In </th><th>Sub Out </th><th>Goal </th><th>Assist</th><th>Caution </th><th>Caution Min </th><th>Send Off </th><th> Send Off Minute </th></tr>
 
 @@v_TEAMDATA@@
 
