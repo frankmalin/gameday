@@ -41,6 +41,20 @@ function processRoster()
 	done
 }
 
+function validate()
+{
+	local file=$1; shift
+	local failed=0
+
+	set `echo $@`
+	while test $# -gt 0
+	do
+		egrep -w "$1" $file || { echo "Player $1, not found in $file" ; failed=1
+		shift
+	done
+	return $failed
+}
+
 team=""
 rosternums=""
 starternums=""
@@ -61,6 +75,9 @@ echo r: $rosternums
 echo s: $starternums
 
 [[ "$team" = "home" ]] && roster=$homeroster || roster=$visitorroster
+
+validate $roster $rosternums || exit 1
+validate $roster $starternums || exit 1
 
 # Process the stating numbers
 
