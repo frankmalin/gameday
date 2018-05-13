@@ -62,7 +62,7 @@ td {
 	<TD>
 	        <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <th colspan="6" > On Pitch</th>
-<tr><th>Num</th><th>Name</th><th>Goal@min</th><th>Min</th><th>Caution</th><th>Red</th><tr>
+<tr><th>Num</th><th>Name</th><th>Goal</th><th>Asst</th><th>Min</th><th>Caution</th><th>Red</th><tr>
 @@h_S@@
 		</TABLE>
 
@@ -70,7 +70,7 @@ td {
 	<TD>
 	        <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <th colspan="6" > On Pitch</th>
-<tr><th>Red</th><th>caution</th><th>Min</th><th>Goal@min</th><th>Name</th><th>Num</th><tr>
+<tr><th>Red</th><th>caution</th><th>Min</th><th>Asst</th><th>Goal</th><th>Name</th><th>Num</th><tr>
 @@v_S@@
 		</TABLE>
 	</TD>
@@ -81,7 +81,7 @@ td {
         <TD>
                 <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <th colspan="6">Sub Out</th>
-<tr><th>Num</th><th>Name</th><th>Goal@min</th><th>Min</th><th>Caution</th><th>Red</th><tr>
+<tr><th>Num</th><th>Name</th><th>Goal</th><th>Asst</th><th>Min</th><th>Caution</th><th>Red</th><tr>
 @@h_O@@
                 </TABLE>
 
@@ -89,7 +89,7 @@ td {
         <TD>
                 <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <th colspan="6" > Sub Out</th>
-<tr><th>Red</th><th>caution</th><th>Min</th><th>Goal@min</th><th>Name</th><th>Num</th><tr>
+<tr><th>Red</th><th>caution</th><th>Min</th><th>Asst</th><th>Goal</th><th>Name</th><th>Num</th><tr>
 @@v_O@@
                 </TABLE>
         </TD>
@@ -99,7 +99,7 @@ td {
         <TD>
                 <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <th colspan="6" > Reserves</th>
-<tr><th>Num</th><th>Name</th><th>Goal@min</th><th>Min</th><th>Caution</th><th>Red</th><tr>
+<tr><th>Num</th><th>Name</th><th>Goal</th><th>Asst</th><th>Min</th><th>Caution</th><th>Red</th><tr>
 @@h_R@@
                 </TABLE>
 
@@ -107,7 +107,7 @@ td {
         <TD>
                 <TABLE WIDTH="410"  BORDER="5" CELLPADDING="1" CELLSPACING="3" align="center">
 <th colspan="6" > Reserves</th>
-<tr><th>Red</th><th>caution</th><th>Min</th><th>Goal@min</th><th>Name</th><th>Num</th><tr>
+<tr><th>Red</th><th>caution</th><th>Min</th><th>Asst</th><th>Goal</th><th>Name</th><th>Num</th><tr>
 @@v_R@@
                 </TABLE>
         </TD>
