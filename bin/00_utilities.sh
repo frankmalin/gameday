@@ -505,7 +505,7 @@ function updateGoal()
         playerwrite
 }
 
-fucntion updateAssist()
+function updateAssist()
 {
         local roster=$1
         local number=$2
