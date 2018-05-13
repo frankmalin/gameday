@@ -49,7 +49,7 @@ function validate()
 	set `echo $@`
 	while test $# -gt 0
 	do
-		egrep -w "$1" $file || { echo "Player $1, not found in $file" ; failed=1
+		egrep -w "$1" $file || { echo "Player $1, not found in $file" ; failed=1 ; }
 		shift
 	done
 	return $failed
