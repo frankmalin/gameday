@@ -496,7 +496,6 @@ function playerJsonRecord()
 
 function updateGoal()
 {
-
         local roster=$1
         local number=$2
 	local goaltime=$3
@@ -504,7 +503,17 @@ function updateGoal()
         playerread $roster $number
         pg=`echo "${pg}_@${goaltime}" | sed "s/^0_//g"` # Need connector field
         playerwrite
+}
 
+fucntion updateAssist()
+{
+        local roster=$1
+        local number=$2
+        local assisttime=$3
+
+        playerread $roster $number
+        pa=`echo "${pa}_@${assisttime}" | sed "s/^0_//g"` # Need connector field
+        playerwrite
 }
 
 

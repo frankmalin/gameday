@@ -79,7 +79,7 @@ function assist()
 	local atminute=$3
 
 	# Update the roster with the assist time
-	# TODO
+	updateAssist $team $num $atminute
 
 }
 
