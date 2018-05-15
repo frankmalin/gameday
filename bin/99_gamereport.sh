@@ -11,7 +11,7 @@ set -x
 function generateTeam()
 {
 	local rosterP=$1
-        local htmlrecord="<tr><td>@@pnum@@</td><td>@@pname@@</td><td>@@notrostered@@</td><td>@@started@@</td><td>@@reserve@@</td><td>@@pm@@</td><td>@@psi@@</td><td>@@pso@@</td><td>@@pg@@</td><td>@@PYR@@</td><td>@@py@@</td><td>@@PRR@@</td><td>@@pr@@</td></tr>"
+        local htmlrecord="<tr><td>@@pnum@@</td><td>@@pname@@</td><td>@@notrostered@@</td><td>@@started@@</td><td>@@reserve@@</td><td>@@pm@@</td><td>@@psi@@</td><td>@@pso@@</td><td>@@pg@@</td><td>@@pa@@</td><td>@@PYR@@</td><td>@@py@@</td><td>@@PRR@@</td><td>@@pr@@</td></tr>"
 
 
 	[[ "$rosterP" = "h" ]] && roster=$homeroster || roster=$visitorroster
@@ -38,8 +38,8 @@ function generateTeam()
 				;;
 			*) s="?"; n="?"; r="?"
 		esac
-		echo $htmlrecord | sed "s/@@pnum@@/$pnum/; s/@@pname@@/$pname/; s/@@notrostered@@/$n/; s/@@started@@/$s/; s/@@reserve@@/$r/; s/@@pm@@/$pm/; s/@@psi@@/$psi/; s/@@pso@@/$pso/; s/@@pg@@/$pg/; s/@@PYR@@/$PYR/; s/@@py@@/$py/; s/@@PRR@@/$PRR/; s/@@pr@@/$pr/" >> $html/teamdata.html
-		playerunlock # There should not be any play ocntention at this time
+		echo $htmlrecord | sed "s/@@pnum@@/$pnum/; s/@@pname@@/$pname/; s/@@notrostered@@/$n/; s/@@started@@/$s/; s/@@reserve@@/$r/; s/@@pm@@/$pm/; s/@@psi@@/$psi/; s/@@pso@@/$pso/; s/@@pg@@/$pg/; s/@@pa@@/$pa/; s/@@PYR@@/$PYR/; s/@@py@@/$py/; s/@@PRR@@/$PRR/; s/@@pr@@/$pr/" >> $html/teamdata.html
+		playerunlock `basename $pfile` # There should not be any play ocntention at this time
 	done	
 	sed -i -e "/@@${rosterP}_TEAMDATA@@/r $html/teamdata.html" $html/game.html
 	sed -i "/@@${rosterP}_TEAMDATA@@/d" $html/game.html

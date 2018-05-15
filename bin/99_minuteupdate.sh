@@ -74,6 +74,9 @@ function updateTeamScoreBoard()
 function updateScoreBoard()
 {
 	trace e
+	# Generate the text file, so the lynx file
+	[[ -f $html/index.html ]] \
+		&& { cp $html/index.html $html/index.html-`date | tr ' ' '_' | tr ':' '-'` ; lynx -dump `realpath $html/index.html` | head -n10 | egrep Minute > $html/index.txt ; }
 	cp $html/index.template $html/index.html
 	updateTeamScoreBoard h $html/index.html
 	updateTeamScoreBoard v $html/index.html
@@ -111,8 +114,18 @@ function pushTheData()
 {
 	# Prereq aws cli installed on machine	
 	# connection information configured for aws
-echo TODO	aws s3 cp $html/index.html s3://mfcgameday/currentgame/ --acl public-read
+echo	aws s3 cp $html/index.html s3://mfcgameday/currentgame/ --acl public-read
 }
+
+function preview() 
+{
+	updateScoreBoard
+	sed -i "s/@@.*@@//g" $html/index.html
+	pushTheData
+}
+
+# We may want to produce a preview 
+[[ "$1" = "preview" ]] && { preview ; exit ; }  
 
 # Make the call to update the minutes played.
 updateMinutesPlayed

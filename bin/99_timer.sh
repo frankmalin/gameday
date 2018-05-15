@@ -10,7 +10,7 @@
 trace e
 testmode=""
 [[ -e "$timefile" ]] || { writetime $1 $2 ; testmode=true ; } # this should only be executed for test, starting with 1 min, first 1/2
-dsleep=60
+dsleep=60 
 extratime=0
 sleeptime=$dsleep
 while true
@@ -38,6 +38,9 @@ do
         # update the clock
 	[[ `echo $lasttime | egrep '^[0-9]{1,2}$'` ]] && { let lasttime+=1 ; writetime $lasttime $halftime ;}
         [[ -z "$testmode" ]] && $bpath/99_minuteupdate.sh &
+	# If this is on the 5 minute interval, then update the time of possession
+	realtime=`echo $lasttime | tr -d '+'` # this should force an update of possession
+	[[ -z "$Xtestmode" ]] && [[ "`echo $(($realtime%10))`" = "0" ]] && $bpath/99_fiveminuteupdate.sh & # TODO, change to testmode from Xtestmode
 	trace i "Minute : $lasttime"
 	[[ "$halftime" = "e" || "$halftime" = "h" ]] && break # The clock should terminate at this time, once the last update has been made above
 done
