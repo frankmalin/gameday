@@ -2,7 +2,7 @@
 #
 # this will be called every minute to produce some form of an update
 #
-#set -x
+set -x
 . `dirname $0`/00_utilities.sh
 
 . $currentgame
@@ -116,6 +116,16 @@ function pushTheData()
 	# connection information configured for aws
 echo	aws s3 cp $html/index.html s3://mfcgameday/currentgame/ --acl public-read
 }
+
+function preview() 
+{
+	updateScoreBoard
+	sed -i "s/@@.*@@//g" $html/index.html
+	pushTheData
+}
+
+# We may want to produce a preview 
+[[ "$1" = "preview" ]] && { preview ; exit ; }  
 
 # Make the call to update the minutes played.
 updateMinutesPlayed

@@ -15,7 +15,10 @@ td {
 </style>
 </head>
 <body>
-
+<br>
+<a href="https://s3.amazonaws.com/medcitystats/season.html"/> Previous Game Index</a>
+<br>
+<br>
      <TABLE  style="font-family:arial;" BORDER="10" CELLPADDING="10" CELLSPACING="10" id="t01" align="center">
     <TD> <img src="@@h_logo@@" alt="Go Med City FC" border=3 height=300 width=300></img></TD>
 

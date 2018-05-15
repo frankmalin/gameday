@@ -9,6 +9,9 @@
 
 . $currentgame
 
+startlimit=11
+rosterlimit=6
+
 function nonRoster()
 {
 	local file=$1 ; shift
@@ -44,14 +47,17 @@ function processRoster()
 function validate()
 {
 	local file=$1; shift
+	local limit=$1; shift
 	local failed=0
-
+	local count=0
 	set `echo $@`
 	while test $# -gt 0
 	do
 		egrep -w "$1" $file > /dev/null || { echo "Player $1, not found in $file" ; failed=1 ; }
+		let count++
 		shift
 	done
+	[[ ! "$limit" = "$count" ]] && { echo "There were $count, expected $limit" ; failed=1 ; }
 	return $failed
 }
 
@@ -76,8 +82,8 @@ echo s: $starternums
 
 [[ "$team" = "home" ]] && roster=$homeroster || roster=$visitorroster
 
-validate $roster $rosternums || exit 1
-validate $roster $starternums || exit 1
+validate $roster $rosterlimit $rosternums || exit 1
+validate $roster $startlimit $starternums || exit 1
 
 # Process the stating numbers
 
