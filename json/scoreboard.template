@@ -9,6 +9,7 @@
 		"possession" : "@@h_percent@@",
 		"corners" : "@@h_corners@@",
 		"fouls" : "@@h_fouls@@",
+		"offsides" : @@h_offsides@@",
 		"pk" : "@@h_pk@@",
 		"yellow" : "@@h_cautions@@",
 		"red" : "@@h_reds@@"
@@ -22,6 +23,7 @@
 		"possession" : "@@v_percent@@",
                 "corners" : "@@v_corners@@",
                 "fouls" : "@@v_fouls@@",
+		"offsides" : @@v_offsides@@",
 		"pk" : "@@v_pk@@",
                 "yellow" : "@@v_cautions@@",
                 "red" : "@@v_reds@@"
