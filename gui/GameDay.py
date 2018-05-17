@@ -711,7 +711,7 @@ class Window(QtGui.QMainWindow):
     def zone(self, team, quadrant):
 	print("Posession: "+team+" in "+quadrant)
 	self.currentPossession=team
-	print("Time:Zone:touch:"+team+":"+self.timestamp())
+	print("Time:Zone"+quadrant+":touch:"+team+":"+self.timestamp())
 
     def command(self, whichCommand):
 	print("Command to run: "+whichCommand)
