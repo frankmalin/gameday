@@ -125,7 +125,7 @@ do
                         team=`echo $action | cut -c2`
                         [[ `echo $team | egrep "h|v"` ]] || { echo "Team should be h or a not: $team" ; break ; }
                         eventD="`teamname $team`"
-                        trace v $(buildevent Foul `gettime` "$eventD")
+			trace v $(buildevent "Penalty Kick" `gettime` "$eventD")
                         update $team pk 
                         ;;
                u) # Offsides (flag is up) 
