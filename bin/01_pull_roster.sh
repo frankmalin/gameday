@@ -31,6 +31,12 @@ function findTeamLogo() {
 	echo findTeamLogo: $logolink/$logoName
 }
 
+function findTeamName() {
+        local lookupName=$1
+        local teamName=`lynx -dump $baselink  | egrep -i logo | egrep -i "$lookupName" | tr '[' '\n'  | egrep -i "$lookupName" | cut -f2 -d']' | cut -c2-`
+        echo findTeamName:$teamName
+}
+
 function buildRoster()
 {
 	local link=$1 # this is the link for the team
@@ -101,8 +107,10 @@ echo Results:
 echo $homelink $hometeamlogo
 echo $visitorlink $visitorteamlogo
 
-hometeamname=`echo $hometeamlogo | rev | cut -f1 -d'/' | rev | cut -f2- -d'_' | cut -f1 -d'.'`
-visitorteamname=`echo $visitorteamlogo | rev | cut -f1 -d'/' | rev | cut -f2- -d'_' | cut -f1 -d'.'`
+#hometeamname=`echo $hometeamlogo | rev | cut -f1 -d'/' | rev | cut -f2- -d'_' | cut -f1 -d'.'`
+#visitorteamname=`echo $visitorteamlogo | rev | cut -f1 -d'/' | rev | cut -f2- -d'_' | cut -f1 -d'.'`
+hometeamname=`findTeamName $home | egrep "findTeamName:" | cut -f2- -d: | tr ' ' '_'`
+visitorteamname=`findTeamName $visitor | egrep "findTeamName:" | cut -f2- -d: | tr ' ' '_'`
 
 # TODO change to the call above for the real links
 # homelink=http://medcityfc.bonzidev.com/sam/teams/index.php?team=3433240
