@@ -2,7 +2,7 @@
 #
 # this will be called every minute to produce some form of an update
 #
-#set -x
+set -x
 . `dirname $0`/00_utilities.sh
 
 . $currentgame
@@ -119,7 +119,9 @@ echo	aws s3 cp $html/index.html s3://mfcgameday/currentgame/ --acl public-read
 
 function preview() 
 {
+	initscoreboards
 	updateScoreBoard
+	updatePlayersHtml
 	sed -i "s/@@.*@@//g" $html/index.html
 	pushTheData
 }
