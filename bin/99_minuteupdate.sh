@@ -2,7 +2,7 @@
 #
 # this will be called every minute to produce some form of an update
 #
-set -x
+# set -x
 . `dirname $0`/00_utilities.sh
 
 . $currentgame
