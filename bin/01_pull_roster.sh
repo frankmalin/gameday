@@ -74,7 +74,7 @@ function validateRoster()
 	trace x
 }
 
-home=""
+home="med"
 visitor=""
 homeroster=""
 visitorroster=""

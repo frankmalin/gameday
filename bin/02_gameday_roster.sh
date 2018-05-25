@@ -4,13 +4,13 @@
 #
 
 # map the home and visitor parameter to the correct team roster
-#set -x
+# set -x
 . `dirname $0`/00_utilities.sh
 
 . $currentgame
 
 startlimit=11
-rosterlimit=6
+rosterlimit=7
 
 function nonRoster()
 {
@@ -51,15 +51,19 @@ function validate()
 	local whichset=$1; shift
 	local failed=0
 	local count=0
-	echo "If team has a non-standard line up, starting 10, with no sub, or less than 6 subs, use : --skipvalidate"
+	egrep -q "0.*0.*0" $file && { mv $file ${file}-Previous ; cat ${file}-Previous | cut -f3,4 | xargs -i echo -e "\t{}" | sort -k1n > $file ; echo "Reformat file" ; }
+	echo "If team has a non-standard line up, starting 10, with no sub, or less than 7 subs, use : --skipvalidate"
+	# check to see if the file format is okay
+	egrep "000" $file && { echo "ERROR: found player in $1 with number 000, please fix number" ; failed=1 ; }
+	[[ `cat $file | cut -f2 | wc -l` = `cat $file | cut -f2 | sort -u | wc -l` ]] || { echo "ERROR: Duplicate number found, cat $file | sort -k1n"; failed=1; }
 	set `echo $@`
 	while test $# -gt 0
 	do
-		egrep -w "$1" $file > /dev/null || { echo "Player $1 for $whichset, not found in $file" ; failed=1 ; }
+		egrep -w "$1" $file > /dev/null || { echo "ERROR: Player $1 for $whichset, not found in $file" ; failed=1 ; }
 		let count++
 		shift
 	done
-	[[ ! "$limit" = "$count" ]] && { echo "There were $count players for $whichset, expected $limit" ; failed=1 ; }
+	[[ ! "$limit" = "$count" ]] && { echo "ERROR: There were $count players for $whichset, expected $limit" ; failed=1 ; }
 	
 	[[ ! "$failed" = "0" && $validate = false ]] && { echo "Error found, but continueing"; failed=0; }
 	return $failed
@@ -80,7 +84,7 @@ while test $# -gt 0; do
 	shift
 done
 
-[[ -z "$team" ]] && { echo Need to set--home or --visitor ; exit 1 ; } 
+[[ -z "$team" || -z "$rosternums" || -z "$starternums" ]] && { echo Need to set--home or --visitor, --start nums, --roster nums ; exit 1 ; } 
 
 echo r: $rosternums
 echo s: $starternums
